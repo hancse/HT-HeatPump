@@ -1,5 +1,4 @@
 import CoolProp
-from CoolProp.CoolProp import PropsSI
 from CoolProp.Plots import StateContainer
 import matplotlib.pyplot as plt
 
@@ -12,7 +11,7 @@ HEOS.set_mass_fractions([0.5, 0.5])
 evaporation_temp = 0 + 273.15                
 condensation_temp = 55 + 273.15  
 superheat = 5                               
-isentropic_eff = 0.7
+isentropic_eff = 0.70
 compressor_loss = 0.1
 condensor_capacity = 14770
 
@@ -36,16 +35,16 @@ s2= HEOS.smass()
 
 
 """----100% isentopic compression----"""
-#HEOS environment
 T3d = condensation_temp
 HEOS.update(CoolProp.QT_INPUTS, 1, T3d)
 P3s = HEOS.p()
-HEOSh3s = HEOS.hmass()
-HEOSs3s = HEOS.smass()
+
+#create inital guesses for T3s and s3s
 T3s = condensation_temp
 HEOS.update(CoolProp.PT_INPUTS, P3s, T3s)
 s3s = HEOS.smass()
 
+#Using a loop to find real values for H3s and T3s
 while (not(s3s < (s2+1)  and s3s > (s2-1))):
     if s3s < s2:
         T3s = T3s + 0.1

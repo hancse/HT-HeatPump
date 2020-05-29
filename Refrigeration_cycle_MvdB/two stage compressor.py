@@ -138,7 +138,7 @@ cycle_states[5][CoolProp.iP] = P5
 cycle_states[5,CoolProp.iT] = T5
 
 cycle_states[6,'H'] = h6
-cycle_states[6]['S'] = s6
+#cycle_states[6]['S'] = s6
 cycle_states[6][CoolProp.iP] = P6
 cycle_states[6,CoolProp.iT] = T6
 
