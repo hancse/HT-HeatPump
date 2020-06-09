@@ -1,16 +1,15 @@
 import CoolProp
-from CoolProp.CoolProp import PropsSI
-from CoolProp.Plots import StateContainer
 import matplotlib.pyplot as plt
+import math 
 
 #setting the gasses
 propane_mass_fraction = 0.5
-HEOS = CoolProp.AbstractState('HEOS', 'Propane&R600')
-HEOS.set_mass_fractions([0.5, 0.5])
+HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
+#HEOS.set_mass_fractions([0.3, 0.7])
 
 #Setting the points
 evaporation_temp = 0 + 273.15                
-condensation_temp = 55 + 273.15
+condensation_temp = 80 + 273.15
 superheat = 5                               
 isentropic_eff = 0.7
 compressor_loss = 0.1
@@ -39,7 +38,7 @@ s2= HEOS.smass()
 T4 = condensation_temp
 HEOS.update(CoolProp.QT_INPUTS, 1, T4)
 P4 = HEOS.p()
-P3sintermediate = ((P4-P1)/2)+P1
+P3sintermediate = math.sqrt(P1*P4)
 
 #create inital guesses for T3s and s3s
 T3sintermediate = condensation_temp
@@ -92,6 +91,7 @@ s3hotintermediate = HEOS.smass()
 P3dintermediate = P3hotintermediate
 HEOS.update(CoolProp.PQ_INPUTS, P3dintermediate, 1)
 h3dintermediate = HEOS.hmass()
+T3dintermediate = HEOS.T()
 
 """---Mixing of the 2 stages using IHE---"""
 h3 = ((h3hotintermediate-h3dintermediate)/2)+h3dintermediate
@@ -162,21 +162,113 @@ while (not(h4test < (h4hot+1000)  and h4test > (h4hot-1000))):
 T4hot = HEOS.T()
 s4hot = HEOS.smass()
 
+"""---Condensation Point---"""
+P4d = P4hot
+HEOS.update(CoolProp.PQ_INPUTS, P4d, 1)
+h4d = HEOS.hmass()
+
+"""---Bubble point---"""
+P4bub = P4d
+HEOS.update(CoolProp.PQ_INPUTS, P4bub, 0)
+h4bub = HEOS.hmass()
+T4bub = HEOS.T()
+
+"""----Subcooling point IHE Intermediate----"""
+P4sub1 = P4bub - 1300
+HEOS.specify_phase(CoolProp.iphase_liquid)
+HEOS.update(CoolProp.PQ_INPUTS, P3, 0)
+T3bub = HEOS.T()
+T4sub1 = (T4bub-T3bub)*.3+T3bub
+
+HEOS.update(CoolProp.PT_INPUTS, P3, T4sub1)
+h4sub1 = HEOS.hmass()
+
+"""----Subcooling point IHE Intermediate----"""
+P4sub2 = P4sub1
+h4sub2 = h4sub1 - (h2-h1)
+h4test = 1000
+T4sub2 = T4sub1
+while (not(h4test < (h4sub2+1000)  and h4test > (h4sub2-1000))):
+    if h4test < h4sub2:
+        T4sub2 = T4sub2 + 0.1
+    else:
+        T4sub2 = T4sub2 - 0.1
+    HEOS.specify_phase(CoolProp.iphase_liquid)
+    HEOS.update(CoolProp.PT_INPUTS, P4sub2, T4sub2)
+    h4test = HEOS.hmass()
+T4sub2 = HEOS.T()
+s4sub2 = HEOS.smass()
+
+"""----Flash point----"""
+h4f = h4sub2
+
+"""---I point----"""
+h5 = h4f
+P5 = P1
+HEOS.update(CoolProp.PQ_INPUTS, P5, 1)
+HEOS.specify_phase(CoolProp.iphase_gas)
+hg = HEOS.hmass()
+HEOS.update(CoolProp.PQ_INPUTS, P5, 0)
+HEOS.specify_phase(CoolProp.iphase_liquid)
+hf = HEOS.hmass()
+X5=(h5-hf)/(hg-hf) 
+
+HEOS.specify_phase(CoolProp.iphase_twophase)
+HEOS.update(CoolProp.PQ_INPUTS, P5, X5)
+T5 = HEOS.T()
+s5 = HEOS.smass()
+
+"""---Intermediate expansion part---"""
+P6 = P3
+h6 = h4sub1
+HEOS.update(CoolProp.PQ_INPUTS, P6, 1)
+HEOS.specify_phase(CoolProp.iphase_gas)
+hg6 = HEOS.hmass()
+HEOS.update(CoolProp.PQ_INPUTS, P6, 0)
+HEOS.specify_phase(CoolProp.iphase_liquid)
+hf6 = HEOS.hmass()
+X6=(h6-hf6)/(hg6-hf6)
+
+HEOS.specify_phase(CoolProp.iphase_twophase)
+HEOS.update(CoolProp.PQ_INPUTS, P6, X6)
+T6 = HEOS.T()
+s6 = HEOS.smass()
+
 HEOS.build_phase_envelope("dummy")
 PE = HEOS.get_phase_envelope_data()
 PELabel = 'Propane, x = ' + str(propane_mass_fraction)
 plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-', label=PELabel)
 
 
-h=[h1,h2,h3disintermediate,h3, h4dis, h4hot]
-P=[P1,P2,P3disintermediate,P3, P4dis, P4hot]
+h=[h1,h2,h3disintermediate,h3, h4dis, h4hot, h4d, h4bub, h4sub2, h5, h1,h2,h3disintermediate,h3, h4dis, h4hot, h4d, h4sub1, h6, h3]
+P=[P1,P2,P3disintermediate,P3, P4dis, P4hot, P4d, P4bub, P4sub2, P5, P1,P2,P3disintermediate,P3, P4dis, P4hot, P4d, P4sub1, P6, P3]
 
+Total_massflow_calculated = condensor_capacity/(h4hot-h4bub)
+
+
+deltahsub1 = h4bub-h4sub1
+qdotsub1 = deltahsub1*Total_massflow_calculated
+
+deltahintermediate = h3dintermediate - h6
+massflow_intermediate = qdotsub1/deltahintermediate
+
+massflow_low = Total_massflow_calculated-massflow_intermediate
+
+
+power_lower_stage = (h3disintermediate-h2)*massflow_low
+power_high_stage = (h4dis-h3)*Total_massflow_calculated
+
+Calculated_COP= condensor_capacity/(power_lower_stage+power_high_stage)
+compressor_power = power_lower_stage+power_high_stage
+print("Massflow:",Total_massflow_calculated)
+print("Calculated_COP:",Calculated_COP)
+print("Calculated_Compressor power:",compressor_power)
 
 plt.plot(h,P,'red')
 plt.xlabel('Enthalpy [J/kg]')
 plt.ylabel('Pressure [kPa]')
 plt.yscale('log')
-plt.ylim(10e4,10e6)
-plt.xlim(250000,750000)
+plt.ylim(5e4,10e6)
+plt.xlim(200000,750000)
 plt.title('Refrigerant cycle for R290/R600 Mixtures')
 plt.legend(loc='lower right', shadow=True)

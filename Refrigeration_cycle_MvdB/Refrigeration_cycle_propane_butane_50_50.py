@@ -3,13 +3,13 @@ from CoolProp.Plots import StateContainer
 import matplotlib.pyplot as plt
 
 #setting the gasses
-propane_mass_fraction = 0.5
-HEOS = CoolProp.AbstractState('HEOS', 'Propane&R600')
-HEOS.set_mass_fractions([0.5, 0.5])
+#propane_mass_fraction = 0.5
+HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
+#HEOS.set_mass_fractions([0.5, 0.5])
 
 #Setting the points
 evaporation_temp = 0 + 273.15                
-condensation_temp = 55 + 273.15  
+condensation_temp = 75 + 273.15  
 superheat = 5                               
 isentropic_eff = 0.70
 compressor_loss = 0.1
@@ -197,8 +197,8 @@ print(cycle_states)
 
 HEOS.build_phase_envelope("dummy")
 PE = HEOS.get_phase_envelope_data()
-PELabel = 'Propane, x = ' + str(propane_mass_fraction)
-plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-', label=PELabel)
+#PELabel = 'Propane, x = ' + str(propane_mass_fraction)
+plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-')
 
 
 h=[h1,h2,h3dis, h4sub, h5, h1]
@@ -207,7 +207,7 @@ P=[P1,P2,P3dis, P4sub, P5, P1]
 
 plt.plot(h,P,'red')
 plt.xlabel('Enthalpy [J/kg]')
-plt.ylabel('Pressure [kPa]')
+plt.ylabel('Pressure [Pa]')
 plt.yscale('log')
 plt.ylim(10e4,10e6)
 plt.xlim(250000,750000)
