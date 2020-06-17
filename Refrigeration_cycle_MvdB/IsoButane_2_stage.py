@@ -11,7 +11,7 @@ HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
 evaporation_temp = 0 + 273.15                
 condensation_temp = 75 + 273.15
 superheat_evap = 5
-superheat_intercooler = 2 
+superheat_intercooler = 5 
 
 subcooling_intercooler = 10                              
 isentropic_eff = 0.7
@@ -23,6 +23,7 @@ condensor_capacity = 14770
 
 T1 = evaporation_temp
 HEOS.update(CoolProp.QT_INPUTS, 1, T1)
+HEOS.specify_phase(CoolProp.iphase_gas)
 P1 = HEOS.p()
 h1 = HEOS.hmass()
 s1 = HEOS.smass()
@@ -84,7 +85,7 @@ while (not(h2dummy < (h5a+1000)  and h2dummy > (h5a-1000))):
         T5a = T5a + 0.1
     else:
         T5a = T5a - 0.1
-    HEOS.update(CoolProp.PT_INPUTS, P2, T5a)
+    HEOS.update(CoolProp.PT_INPUTS, P5a, T5a)
     h2dummy = HEOS.hmass()
 T5a = HEOS.T()
 s5a = HEOS.smass()
@@ -104,8 +105,10 @@ HEOS.update(CoolProp.PT_INPUTS, P2a, T2a)
 h2a = HEOS.hmass()
 s2a = HEOS.smass()
 
+
+
 """----100% isentopic compression upper stage----"""
-T3 = condensation_temp -10
+T3 = condensation_temp
 P3 = P6
 
 #create inital guesses for T3s and s3s
@@ -117,7 +120,7 @@ while (not(s3 < (s2a+1)  and s3 > (s2a-1))):
     if s3 < s2a:
         T3 = T3 + 0.1
     else:
-        T3 = T3 -0.1
+        T3 = T3 - 0.1
     HEOS.update(CoolProp.PT_INPUTS, P3, T3)
     s3 = HEOS.smass()
 h3 = HEOS.hmass()
@@ -133,7 +136,7 @@ while (not(h4test < (h4+1000)  and h4test > (h4-1000))):
     if h4test < h4:
         T4 = T4 + 0.1
     else:
-        T4 = T4 -0.1
+        T4 = T4 - 0.1
     HEOS.update(CoolProp.PT_INPUTS, P4, T4)
     h4test = HEOS.hmass()
 T4 = HEOS.T()
@@ -161,12 +164,13 @@ s6 = HEOS.smass()
 
 """---Bubble point---"""
 P7 = P6
+HEOS.specify_phase(CoolProp.iphase_gas)
 HEOS.update(CoolProp.PQ_INPUTS, P7, 0)
 h7 = HEOS.hmass()
 T7 = HEOS.T()
 s7 = HEOS.smass
 
-"""----Subcooling point IHE Intermediate----"""
+"""----Subcooling point intercooler ----"""
 P8a = P7
 HEOS.specify_phase(CoolProp.iphase_liquid)
 HEOS.update(CoolProp.PQ_INPUTS, P8a, 0)
@@ -175,7 +179,7 @@ HEOS.update(CoolProp.PT_INPUTS, P3, T8a)
 h8a = HEOS.hmass()
 s8a = HEOS.smass()
 
-"""----Subcooling point IHE Intermediate----"""
+"""----Subcooling point desuperheater----"""
 P8 = P8a
 h8 = h8a - (h2-h1)
 h8test = 1000
@@ -232,8 +236,8 @@ PELabel = 'Propane, x = ' + str(propane_mass_fraction)
 plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-', label=PELabel)
 
 
-h=[h1,h2,h4a,h2a, h4, h6, h7, h8, h10, h1,h2,h4a,h2a, h4, h6, h7, h8a, h10a,h2a]
-P=[P1,P2,P4a,P2a, P4, P6, P7, P8, P10, P1,P2,P4a,P2a, P4, P6, P7, P8a, P10a,P2a]
+h=[h1,h2,h4a,h5a,h2a, h4, h6, h7, h8, h10, h1,h2,h4a,h2a, h4, h6, h7, h8a, h10a,h2a]
+P=[P1,P2,P4a,P5a,P2a, P4, P6, P7, P8, P10, P1,P2,P4a,P2a, P4, P6, P7, P8a, P10a,P2a]
 """
 Total_massflow_calculated = condensor_capacity/(h4hot-h4bub)
 

@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 #setting the gasses
 #propane_mass_fraction = 0.5
 HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
+HEOS.build_phase_envelope("dummy")
 #HEOS.set_mass_fractions([0.5, 0.5])
 
 #Setting the points
@@ -195,7 +196,6 @@ cycle_states[" I ",CoolProp.iT] = T5
 print(cycle_states)
 
 
-HEOS.build_phase_envelope("dummy")
 PE = HEOS.get_phase_envelope_data()
 #PELabel = 'Propane, x = ' + str(propane_mass_fraction)
 plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-')
