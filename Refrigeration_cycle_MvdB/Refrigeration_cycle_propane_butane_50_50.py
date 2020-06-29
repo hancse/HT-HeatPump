@@ -27,7 +27,6 @@ h1 = HEOS.hmass()
 s1 = HEOS.smass()
 
 """----Superheating----"""
-
 P2 = P1
 T2 = superheat + evaporation_temp
 HEOS.update(CoolProp.PT_INPUTS, P2, T2)
