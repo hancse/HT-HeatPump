@@ -1,19 +1,18 @@
 import CoolProp
 import matplotlib.pyplot as plt
-import math 
+import math
+from CoolProp.Plots import StateContainer
 
-#setting the gasses
-propane_mass_fraction = 0.5
+# setting the gasses
 HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
-#HEOS.set_mass_fractions([0.3, 0.7])
 
-#Setting the points
-evaporation_temp = 0 + 273.15                
+# Setting the variables
+evaporation_temp = 0 + 273.15
 condensation_temp = 75 + 273.15
-superheat_evap = 5
-superheat_intercooler = 5 
+superheat_evap = 10
+superheat_intercooler = 10
 
-subcooling_intercooler = 10                              
+subcooling_intercooler = 5
 isentropic_eff = 0.7
 compressor_loss = 0.1
 condensor_capacity = 14770
@@ -33,23 +32,23 @@ s1 = HEOS.smass()
 P2 = P1
 T2 = superheat_evap + evaporation_temp
 HEOS.update(CoolProp.PT_INPUTS, P2, T2)
-h2= HEOS.hmass()
-s2= HEOS.smass()
+h2 = HEOS.hmass()
+s2 = HEOS.smass()
 
-
-"""----100% isentopic compression lower stage----"""
+"""----Intermediate stage pressuer calculation----"""
 T6 = condensation_temp
 HEOS.update(CoolProp.QT_INPUTS, 1, T6)
 P6 = HEOS.p()
 P1a = math.sqrt(P1*P6)
 
-#create inital guesses for T3s and s3s
+# Create inital guesses for T3s and s3s
+P3a = P1a
 T3a = condensation_temp
 HEOS.update(CoolProp.PT_INPUTS, P1a, T3a)
 s3a = HEOS.smass()
 
-#Using a loop to find real values for H3s and T3s
-while (not(s3a < (s2+1)  and s3a > (s2-1))):
+# Using a loop to find real values for H3s and T3s
+while (not(s3a < (s2+1) and s3a > (s2-1))):
     if s3a < s2:
         T3a = T3a + 0.1
     else:
@@ -65,22 +64,22 @@ HEOS.update(CoolProp.PT_INPUTS, P4a, T3a)
 T4a = HEOS.T()
 h2dummy = HEOS.hmass()
 
-while (not(h2dummy < (h4a+1000)  and h2dummy > (h4a-1000))):
+while (not(h2dummy < (h4a + 1000) and h2dummy > (h4a - 1000))):
     if h2dummy < h4a:
         T4a = T4a + 0.1
     else:
-        T4a = T4a -0.1
+        T4a = T4a - 0.1
     HEOS.update(CoolProp.PT_INPUTS, P4a, T4a)
     h2dummy = HEOS.hmass()
 T4a = HEOS.T()
 s4a = HEOS.smass()
 
 """----Hot point lower stage----"""
-h5a = h4a -((h4a-h2)*compressor_loss)
+h5a = h4a - ((h4a - h2) * compressor_loss)
 P5a = P1a
 h2dummy = 1000
 T5a = T4a
-while (not(h2dummy < (h5a+1000)  and h2dummy > (h5a-1000))):
+while (not(h2dummy < (h5a+1000) and h2dummy > (h5a-1000))):
     if h2dummy < h5a:
         T5a = T5a + 0.1
     else:
@@ -93,7 +92,6 @@ s5a = HEOS.smass()
 """---Intermediate boiling point----"""
 HEOS.update(CoolProp.PQ_INPUTS, P1a, 1)
 T1a = HEOS.T()
-#HEOS.update(CoolProp.PT_INPUTS, P1a, T1a)
 h1a = HEOS.hmass()
 s1a = HEOS.smass()
 
@@ -111,12 +109,12 @@ s2a = HEOS.smass()
 T3 = condensation_temp
 P3 = P6
 
-#create inital guesses for T3s and s3s
+# Create inital guesses for T3s and s3s
 HEOS.update(CoolProp.PT_INPUTS, P3, T3)
 s3 = HEOS.smass()
 
-#Using a loop to find real values for H3s and T3s
-while (not(s3 < (s2a+1)  and s3 > (s2a-1))):
+# Using a loop to find real values for H3s and T3s
+while (not(s3 < (s2a+1) and s3 > (s2a-1))):
     if s3 < s2a:
         T3 = T3 + 0.1
     else:
@@ -132,7 +130,7 @@ HEOS.update(CoolProp.PT_INPUTS, P4, T6)
 T4 = HEOS.T()
 h4test = HEOS.hmass()
 
-while (not(h4test < (h4+1000)  and h4test > (h4-1000))):
+while (not(h4test < (h4 + 1000) and h4test > (h4 - 1000))):
     if h4test < h4:
         T4 = T4 + 0.1
     else:
@@ -147,7 +145,7 @@ h5 = h4-((h4-h2a)*compressor_loss)
 P5 = P4
 h5test = 1000
 T5 = T4
-while (not(h5test < (h5+1000)  and h5test > (h5-1000))):
+while (not(h5test < (h5 + 1000) and h5test > (h5 - 1000))):
     if h5test < h5:
         T5 = T5 + 0.1
     else:
@@ -155,7 +153,7 @@ while (not(h5test < (h5+1000)  and h5test > (h5-1000))):
     HEOS.update(CoolProp.PT_INPUTS, P5, T5)
     h5test = HEOS.hmass()
 T5 = HEOS.T()
-s4hot = HEOS.smass()
+s5 = HEOS.smass()
 
 """---Condensation Point---"""
 HEOS.update(CoolProp.PQ_INPUTS, P6, 1)
@@ -184,7 +182,7 @@ P8 = P8a
 h8 = h8a - (h2-h1)
 h8test = 1000
 T8 = T8a
-while (not(h8test < (h8+1000)  and h8test > (h8-1000))):
+while (not(h8test < (h8+1000) and h8test > (h8-1000))):
     if h8test < h8:
         T8 = T8 + 0.1
     else:
@@ -207,7 +205,7 @@ hg = HEOS.hmass()
 HEOS.update(CoolProp.PQ_INPUTS, P10, 0)
 HEOS.specify_phase(CoolProp.iphase_liquid)
 hf = HEOS.hmass()
-X10=(h10-hf)/(hg-hf) 
+X10 = (h10-hf) / (hg-hf)
 
 HEOS.specify_phase(CoolProp.iphase_twophase)
 HEOS.update(CoolProp.PQ_INPUTS, P10, X10)
@@ -223,16 +221,28 @@ hg10a = HEOS.hmass()
 HEOS.update(CoolProp.PQ_INPUTS, P10a, 0)
 HEOS.specify_phase(CoolProp.iphase_liquid)
 hf10a = HEOS.hmass()
-X10a=(h10a-hf10a)/(hg10a-hf10a)
+X10a = (h10a-hf10a) / (hg10a-hf10a)
 
 HEOS.specify_phase(CoolProp.iphase_twophase)
 HEOS.update(CoolProp.PQ_INPUTS, P10a, X10a)
 T10a = HEOS.T()
 s10a = HEOS.smass()
 
+M = condensor_capacity/(h5-h7)
+X_2 = (h2a-h10a-(h7-h8a))/(h4a-h10a)
+m_2 = M*X_2
+m_1 = M - m_2
+check_massflow = ((M-m_1)/M == m_2/M == X_2)
+COP = condensor_capacity/((m_2*(h4a-h2)) + (M*(h4-h2a)))
+print("Total massflow:", M)
+print("Massflow evaporator:", m_2)
+print("Massflow intermediate stage:", m_1)
+print("Fraction of massflow through evaporator:", X_2)
+print("COP:", COP)
+
 HEOS.build_phase_envelope("dummy")
 PE = HEOS.get_phase_envelope_data()
-PELabel = 'Propane, x = ' + str(propane_mass_fraction)
+PELabel = 'Propane, x = '
 plt.plot([x / HEOS.molar_mass() for x in PE.hmolar_vap],PE.p, '-', label=PELabel)
 
 
@@ -264,7 +274,89 @@ plt.plot(h,P,'red')
 plt.xlabel('Enthalpy [J/kg]')
 plt.ylabel('Pressure [kPa]')
 plt.yscale('log')
-plt.ylim(5e4,10e6)
-plt.xlim(200000,750000)
+plt.ylim(9e4,5e6)
+plt.xlim(320000,700000)
 plt.title('Refrigerant cycle for R290/R600 Mixtures')
 plt.legend(loc='lower right', shadow=True)
+
+"""----------------------------------------------------"""
+
+cycle_states = StateContainer()
+
+cycle_states[" 1 " ,'H'] = h1
+cycle_states[" 1 "]['S'] = s1
+cycle_states[" 1 "][CoolProp.iP] = P1
+cycle_states[" 1 ",CoolProp.iT] = T1
+
+cycle_states[" 2 " ,'H'] = h2
+cycle_states[" 2 "]['S'] = s2
+cycle_states[" 2 "][CoolProp.iP] = P2
+cycle_states[" 2 ",CoolProp.iT] = T2
+
+cycle_states[" 3a " ,'H'] = h3a
+cycle_states[" 3a "]['S'] = s3a
+cycle_states[" 3a "][CoolProp.iP] = P3a
+cycle_states[" 3a ",CoolProp.iT] = T3a
+
+cycle_states[" 4a " ,'H'] = h4a
+cycle_states[" 4a "]['S'] = s4a
+cycle_states[" 4a "][CoolProp.iP] = P4a
+cycle_states[" 4a ",CoolProp.iT] = T4a
+
+cycle_states[" 5a " ,'H'] = h5a
+cycle_states[" 5a "]['S'] = s5a
+cycle_states[" 5a "][CoolProp.iP] = P5a
+cycle_states[" 5a ",CoolProp.iT] = T5a
+
+cycle_states[" 2a " ,'H'] = h2a
+cycle_states[" 2a "]['S'] = s2a
+cycle_states[" 2a "][CoolProp.iP] = P2a
+cycle_states[" 2a ",CoolProp.iT] = T2a
+
+cycle_states[" 3 " ,'H'] = h3
+cycle_states[" 3 "]['S'] = s3
+cycle_states[" 3 "][CoolProp.iP] = P3
+cycle_states[" 3 ",CoolProp.iT] = T3
+
+cycle_states[" 4 " ,'H'] = h4
+cycle_states[" 4 "]['S'] = s4
+cycle_states[" 4 "][CoolProp.iP] = P4
+cycle_states[" 4 ",CoolProp.iT] = T4
+
+cycle_states[" 5 " ,'H'] = h5
+cycle_states[" 5 "]['S'] = s5
+cycle_states[" 5 "][CoolProp.iP] = P5
+cycle_states[" 5 ",CoolProp.iT] = T5
+
+cycle_states[" 6 " ,'H'] = h6
+cycle_states[" 6 "]['S'] = s6
+cycle_states[" 6 "][CoolProp.iP] = P6
+cycle_states[" 6 ",CoolProp.iT] = T6
+
+cycle_states[" 7 " ,'H'] = h7
+cycle_states[" 7 "]['S'] = s7
+cycle_states[" 7 "][CoolProp.iP] = P7
+cycle_states[" 7 ",CoolProp.iT] = T7
+
+cycle_states[" 8a " ,'H'] = h8a
+cycle_states[" 8a "]['S'] = s8a
+cycle_states[" 8a "][CoolProp.iP] = P8a
+cycle_states[" 8a ",CoolProp.iT] = T8a
+
+
+cycle_states[" 10a " ,'H'] = h10a
+cycle_states[" 10a "]['S'] = s10a
+cycle_states[" 10a "][CoolProp.iP] = P10a
+cycle_states[" 10a ",CoolProp.iT] = T10a
+
+cycle_states[" 8 " ,'H'] = h8
+cycle_states[" 8 "]['S'] = s8
+cycle_states[" 8 "][CoolProp.iP] = P8
+cycle_states[" 8 ",CoolProp.iT] = T8
+
+cycle_states[" 10 " ,'H'] = h10
+cycle_states[" 10 "]['S'] = s10
+cycle_states[" 10 "][CoolProp.iP] = P10
+cycle_states[" 10 ",CoolProp.iT] = T10
+
+print(cycle_states)
