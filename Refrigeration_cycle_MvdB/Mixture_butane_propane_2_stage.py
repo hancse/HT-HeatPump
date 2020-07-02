@@ -3,9 +3,8 @@ import matplotlib.pyplot as plt
 import math 
 
 #setting the gasses
-propane_mass_fraction = 0.5
-HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
-#HEOS.set_mass_fractions([0.3, 0.7])
+HEOS = CoolProp.AbstractState('HEOS', 'IsoButane&Propane')
+HEOS.set_mass_fractions([0.3, 0.7])
 
 #Setting the points
 evaporation_temp = 0 + 273.15                
