@@ -219,4 +219,3 @@ compressor_power = (h3dis-h2)*Massflow_calculated
 print("Massflow:",Massflow_calculated)
 print("Calculated_COP:",Calculated_COP)
 print("Calculated_Compressor power:",compressor_power)
-
