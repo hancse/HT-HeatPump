@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import math
 from CoolProp.Plots import StateContainer
 
-refrigerant = 'IsoButane'
+refrigerant = 'R600a'
 
 # setting the gasses
 HEOS = CoolProp.AbstractState('HEOS', refrigerant)
+
 
 # Setting the variables
 evaporation_temp = 0 + 273.15
@@ -17,7 +18,13 @@ superheat_intercooler = 5
 subcooling_intercooler = 5
 isentropic_eff = 0.7
 compressor_loss = 0.1
-condensor_capacity = 14770
+condensor_capacity = 50000
+
+DP_sup = 5000
+DP_cond = 5000
+DP_sub = 5000
+DP_evap = 5000
+DP_int = 5000
 
 
 """----Evaporation----"""
@@ -31,7 +38,7 @@ s1 = HEOS.smass()
 
 """----Superheating----"""
 
-P2 = P1
+P2 = P1 - DP_sup
 T2 = superheat_evap + evaporation_temp
 HEOS.update(CoolProp.PT_INPUTS, P2, T2)
 h2 = HEOS.hmass()
@@ -42,7 +49,7 @@ s2 = HEOS.smass()
 T6 = condensation_temp
 HEOS.update(CoolProp.QT_INPUTS, 1, T6)
 P6 = HEOS.p()
-P1a = math.sqrt(P1*P6)
+P1a = math.sqrt(P2*P6)
 
 # Create inital guesses for T3s and s3s
 P3a = P1a
@@ -171,7 +178,7 @@ s6 = HEOS.smass()
 
 """---Bubble point---"""
 
-P7 = P6
+P7 = P6 - DP_cond
 HEOS.specify_phase(CoolProp.iphase_gas)
 HEOS.update(CoolProp.PQ_INPUTS, P7, 0)
 h7 = HEOS.hmass()
@@ -180,7 +187,7 @@ s7 = HEOS.smass()
 
 """----Subcooling point intercooler ----"""
 
-P8a = P7
+P8a = P7 - DP_sub
 HEOS.specify_phase(CoolProp.iphase_liquid)
 HEOS.update(CoolProp.PQ_INPUTS, P8a, 0)
 T8a = T7 - subcooling_intercooler
@@ -212,7 +219,7 @@ h9 = h8
 """---I point----"""
 
 h10 = h9
-P10 = P1
+P10 = P1 + DP_evap
 HEOS.update(CoolProp.PQ_INPUTS, P10, 1)
 HEOS.specify_phase(CoolProp.iphase_gas)
 hg = HEOS.hmass()
@@ -228,7 +235,7 @@ s10 = HEOS.smass()
 
 """---Intermediate expansion part---"""
 
-P10a = P1a
+P10a = P1a + DP_int
 h10a = h8a
 HEOS.update(CoolProp.PQ_INPUTS, P10a, 1)
 HEOS.specify_phase(CoolProp.iphase_gas)
@@ -246,15 +253,24 @@ s10a = HEOS.smass()
 """---Intermediate outlet part---"""
 
 M = condensor_capacity/(h5-h7)
-X_2 = (h2a-h10a-(h7-h8a))/(h4a-h10a)
+X_2 = (h2a-h10a-(h7-h8a))/(h5a-h10a)
 m_2 = M*X_2
 m_1 = M - m_2
+
 
 P11 = P10a
 h11 = ((M/m_1)*(h7-h8a))+h10a
 HEOS.update(CoolProp.HmassP_INPUTS, h11, P11)
 s11 = HEOS.smass()
 T11 = HEOS.T()
+
+"""---Intermediate Flash Point---"""
+T11a = T1a
+HEOS.specify_phase(CoolProp.iphase_liquid)
+HEOS.update(CoolProp.QT_INPUTS, 0, T11a)
+P11a = HEOS.p()
+h11a = HEOS.hmass()
+s11a = HEOS.smass()
 
 
 check_massflow = ((M-m_1)/M == m_2/M == X_2)
@@ -268,6 +284,8 @@ print("Total massflow:", round(M, 5), "[kg/s]")
 print("Massflow evaporator:", round(m_2, 5), "[kg/s]")
 print("Massflow intermediate stage:", round(m_1, 5), "[kg/s]")
 print("Fraction of massflow through evaporator:", round(X_2*100, 3), "%")
+print("Power lower stage:", round(Compressor_power_lower_stage, 0), "[W]")
+print("Power upper stage:", round(Compressor_power_higher_stage, 0), "[W]")
 print("COP:", round(COP, 4))
 
 HEOS.build_phase_envelope("dummy")
@@ -381,5 +399,10 @@ cycle_states[" 11 ", 'H'] = h11
 cycle_states[" 11 "]['S'] = s11
 cycle_states[" 11 "][CoolProp.iP] = P11
 cycle_states[" 11 ", CoolProp.iT] = T11
+
+cycle_states[" 11a ", 'H'] = h11a
+cycle_states[" 11a "]['S'] = s11a
+cycle_states[" 11a "][CoolProp.iP] = P11a
+cycle_states[" 11a ", CoolProp.iT] = T11a
 
 print(cycle_states)
