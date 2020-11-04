@@ -6,7 +6,7 @@ from scipy.integrate import odeint
 import numpy as np # linear algebra
 
 
-def house(T_outdoor,Q_internal,Q_solar,SP_T,Qinst,time_sim,CF,Rair_outdoor,Rair_wall,Cair,Cwall):
+def house(T_outdoor,Q_internal,Q_solar,SP_T,time_sim,CF,Rair_outdoor,Rair_wall,Cair,Cwall):
     """Compute air and wall tempearature inside the house.
 
         Args:
@@ -82,6 +82,10 @@ def house(T_outdoor,Q_internal,Q_solar,SP_T,Qinst,time_sim,CF,Rair_outdoor,Rair_
       
     for i in range(len(t)-1):
         
+		err=SP_Sim[i+1] - Tair[i]
+        Qinst=err*kp
+        Qinst=np.clip(Qinst, 0, 7000)
+		
         inputs = (T_outdoor[i],Q_internal[i],Q_solar[i],SP_T[i],Qinst,CF,Rair_outdoor,Rair_wall,Cair,Cwall)
         #print(i)
         ts = [t[i],t[i+1]]

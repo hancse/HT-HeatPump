@@ -21,7 +21,7 @@ Toutdoor_p = Toutdoor
 #Windows surface [E,SE,S,SW,W,NW,N,NE] [m2]
 # -90 (E), -45 (SE), 0 (S), 45 (SW), 90 (W), 135 (NW), 180 (N), 225 (NE)
 
-glass=[9.5,9.5,0,0,0,0,0,0]
+glass=[0,9.5,0,9.5,0,0,0,0]
 
 #Window solar transmitance, g-value
 g_value =0.7

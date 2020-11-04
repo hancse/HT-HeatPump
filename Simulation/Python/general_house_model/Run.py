@@ -12,7 +12,7 @@ from house_model.Total_Irrad import *
 #import house_model
 
 #Define Simulation time
-days_Sim = 25                          #number of simulation days
+days_Sim = 365                          #number of simulation days
 
 
 time_sim      = time[0:days_Sim*24]
@@ -29,4 +29,4 @@ SP_Sim=SP[0:days_Sim*24]
 #Cair=Cair
 #Cwall=Cwall
 
-data = house(T_outdoor_Sim,Qinternal_Sim,Qsolar_Sim,SP_Sim,0,time_sim,CF,Rair_outdoor,Rair_wall,Cair,Cwall)
+data = house(T_outdoor_Sim,Qinternal_Sim,Qsolar,SP_Sim,time_sim,CF,Rair_outdoor,Rair_wall,Cair,Cwall)
