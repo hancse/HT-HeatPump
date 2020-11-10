@@ -4,12 +4,13 @@ init.py : used to be a required part of a package
 '''
 name = "house_model"  # why do we need packages name?
 
-from .house 			 import *
-from .qsun  			 import *
-from .internal_heat_gain import *
-from .parameters 		 import *
-from .read_NEN 			 import *
-from .Temperature_SP 	 import *
-from .Total_Irrad 		 import *
+from .house 			  import *
+from .qsun  			  import *
+from .internal_heat_gain  import *
+from .read_NEN 		      import *
+from .Temperature_SP 	  import *
+from .Total_Irrad 		  import *
+from .parameters 		  import *
+from .Simulation          import *
 
 

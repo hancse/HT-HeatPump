@@ -12,7 +12,7 @@
     Qinst : Q (isntant  by heating or cooling needed) at this moments
     Last modify by Trung Nguyen
 '''
-from house_model.Total_Irrad import * 
+from Total_Irrad import * 
 
 # read outside temperature
 Toutdoor_p = Toutdoor
@@ -21,7 +21,7 @@ Toutdoor_p = Toutdoor
 #Windows surface [E,SE,S,SW,W,NW,N,NE] [m2]
 # -90 (E), -45 (SE), 0 (S), 45 (SW), 90 (W), 135 (NW), 180 (N), 225 (NE)
 
-glass=[0,9.5,0,9.5,0,0,0,0]
+glass=[0,0,9.5,0,0,0,9.5,0]
 
 #Window solar transmitance, g-value
 g_value =0.7
@@ -32,10 +32,10 @@ time=qsunS[0]
 
 #Calculate Qsolar on window
 
-Qsolar = (qsunS[1]*glass[0] + qsunSW[1]*glass[1] + 
-                      qsunW[1]*glass[2] + qsunNW[1]*glass[3] + 
-                      qsunN[1]*glass[4] + qsunNE[1]*glass[5] + 
-                      qsunE[1]*glass[6] + qsunSE[1]*glass[7]) * g_value
+Qsolar = (qsunE[1]*glass[0] + qsunSE[1]*glass[1] + 
+                      qsunS[1]*glass[2] + qsunSW[1]*glass[3] + 
+                      qsunW[1]*glass[4] + qsunNW[1]*glass[5] + 
+                      qsunN[1]*glass[6] + qsunNE[1]*glass[7]) * g_value
 			
 
 #Envelope surface (facade + roof + ground) [m2]
@@ -58,7 +58,7 @@ V_dwelling = 275.6
 N_facade  = 2                  # Middle_weight =2 Light_weight =1 / Heavy_weight
 
 #Floor and internal walls surface [m2]
-A_internal_mass = 300
+A_internal_mass = 106+64
 
 #Floor and internal walls construction
 N_internal_mass = 2             # Middle_weight =2 / Light_weight=1 / Heavy_weight

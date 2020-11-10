@@ -2,20 +2,20 @@ from scipy import signal
 import numpy as np # linear algebra
 import matplotlib.pyplot as plt
 
-#Define Temperature SP for 1 days (24 hours)
+#_____Define Temperature SP for 1 days (24 hours)__________
 
 t1= 8                                #Presence from [hour]
 t2= 23                               #Presence until [hour]
 
 Night_T_SP=17                        # Set temperature of thermostat at night from time t2     
-Day_T_SP=20							 # Set wishes temperature of thermostat
+Day_T_SP=20			     # Set wishes temperature of thermostat
 
 # Define Wake up time
-Wu_time =7           				 # Define wake up time in the morning, temperature set to 20
+Wu_time =7           		     # Define wake up time in the morning, temperature set to 20
 duty_wu = 23-7       				 
 
 # Go to work time/ leave the house
-Work_time = 8           			 # Define time that people go to work.
+Work_time = 8           	     # Define time that people go to work.
 duty_w   = 23-8        
 
 # Back to home

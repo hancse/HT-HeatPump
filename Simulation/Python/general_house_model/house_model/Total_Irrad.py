@@ -8,9 +8,9 @@
 '''
 
 import numpy as np
-from house_model.qsun import Qsun
+from qsun import Qsun
 import pandas as pd
-from house_model.read_NEN import xls
+from read_NEN import xls
 
 
 
