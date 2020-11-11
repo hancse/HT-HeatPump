@@ -7,10 +7,10 @@
  horizontal: beta=0, vertical: beta=90
 '''
 
-import numpy as np
-from qsun import Qsun
-import pandas as pd
-from read_NEN import xls
+import	numpy 		as np
+import	qsun  
+import	pandas 		as pd
+import	read_NEN
 
 
 
@@ -20,11 +20,11 @@ k=1 # select sheet 1 from NEN
 
 
 if k==1:
-    NUM = pd.read_excel(xls,'nen5060 - energie') # this file is part of NEN 5060 20018
+    NUM = pd.read_excel(read_NEN.xls,'nen5060 - energie') # this file is part of NEN 5060 20018
 elif k==2:
-    NUM = pd.read_excel(xls,'ontwerp 1%')
+    NUM = pd.read_excel(read_NEN.xls,'ontwerp 1%')
 elif k==3:
-    NUM = pd.read_excel(xls,'ontwerp 5%')
+    NUM = pd.read_excel(read_NEN.xls,'ontwerp 5%')
 	
 #Convert data frame to array
 to_array=NUM.to_numpy()
@@ -91,9 +91,9 @@ for j in range(9):
     k=k+1
     
     for i in range(8760):
-        temp = Qsun(qdiff_hor[i],qdir_nor[i],gamma,beta,rground,iday[i],LST[i])
+        temp = qsun.Irrad(qdiff_hor[i],qdir_nor[i],gamma,beta,rground,iday[i],LST[i])
         #E[i][j]=qsun(t[i],qdiff_hor[i],qdir_nor[i],gamma,beta,rground)
-        E[:,j][i]=temp.irrad()
+        E[:,j][i]=temp
     #n=n+1
 #myarray = np.asarray(E)
 myarray = E  

@@ -12,10 +12,10 @@
     Qinst : Q (isntant  by heating or cooling needed) at this moments
     Last modify by Trung Nguyen
 '''
-from Total_Irrad import * 
+import Total_Irrad as Irr 
 
 # read outside temperature
-Toutdoor_p = Toutdoor
+Toutdoor = Irr.Toutdoor
 
 #define window surface in m2
 #Windows surface [E,SE,S,SW,W,NW,N,NE] [m2]
@@ -28,14 +28,14 @@ g_value =0.7
 
 #Time base on 1 hour sampling from NEN
 
-time=qsunS[0]
+time=Irr.qsunS[0]
 
 #Calculate Qsolar on window
 
-Qsolar = (qsunE[1]*glass[0] + qsunSE[1]*glass[1] + 
-                      qsunS[1]*glass[2] + qsunSW[1]*glass[3] + 
-                      qsunW[1]*glass[4] + qsunNW[1]*glass[5] + 
-                      qsunN[1]*glass[6] + qsunNE[1]*glass[7]) * g_value
+Qsolar = (Irr.qsunE[1]*glass[0] + Irr.qsunSE[1]*glass[1] + 
+                      Irr.qsunS[1]*glass[2] + Irr.qsunSW[1]*glass[3] + 
+                      Irr.qsunW[1]*glass[4] + Irr.qsunNW[1]*glass[5] + 
+                      Irr.qsunN[1]*glass[6] + Irr.qsunNE[1]*glass[7]) * g_value
 			
 
 #Envelope surface (facade + roof + ground) [m2]
