@@ -10,10 +10,22 @@ Define input parameters and Initialization of Dwelling parameters
 """
 
 import Total_Irrad as Irr 
-
+"""
+Module parameters.py first imports and executes the script in the module Total_Irrad...
+"""
 # read outside temperature
 Toutdoor = Irr.Toutdoor
-
+"""
+...therefore, suddenly a variable Irr.Toutdoor pops up. 
+"""
+print("ID Toutdoor: ", id(Toutdoor), ", ID Irr.Toutdoor: ", id(Irr.Toutdoor))
+"""
+ the "new" variable Toutdoor is at the same memory address as 
+ the "old"variable Irr.Toutdoor!
+see: https://www.w3schools.com/python/ref_func_id.asp
+the instruction has NOT COPIED the variable, but now it has TWO NAMES
+this may cause TROUBLE! 
+"""
 # define window surface in m2
 # Windows surface [E,SE,S,SW,W,NW,N,NE] [m2]
 # -90 (E), -45 (SE), 0 (S), 45 (SW), 90 (W), 135 (NW), 180 (N), 225 (NE)
@@ -26,7 +38,14 @@ g_value = 0.7
 # Time base on 1 hour sampling from NEN
 
 time = Irr.qsunS[0]
-
+print("ID time: ", id(time), ", ID Irr.qsunS[0]: ", id(Irr.qsunS[0]))
+""" 
+the "new" variable time is NOT at the same memory address as 
+the "old" variable Irr.qsunS[0]!
+because the value of the first element of an array is assigned to a scalar (float)
+the instruction now has COPIED the variable
+this asks for extreme programmer awareness!
+"""
 # Calculate Qsolar on window
 
 Qsolar = (Irr.qsunE[1]*glass[0] + Irr.qsunSE[1]*glass[1] + 
@@ -62,7 +81,11 @@ N_internal_mass = 2             # Middle_weight =2 / Light_weight=1 / Heavy_weig
 
 #N_internal_mass = 2   # 1: Light weight construction / 2: Middle weight construction / 3: Heavy weight construction
 #N_facade = 2          # 1: Light weight construction / 2: Middle weight construction / 3: Heavy weight construction
-
+"""
+Nine input variables are added to the "workspace"
+They are hard-coded and can not be changed easily by a user interface
+the variable names are hidden in the parameters.py module
+"""
 #_______________________________________________________
 
 #Initial parameters file for House model
@@ -74,8 +97,11 @@ c_air  = 1005              # specific heat capacity air [J/kgK]
 alpha_i_facade = 8
 alpha_e_facade = 23
 alpha_internal_mass = 8
-
-#Variables from Simulink model, dwelling mask
+"""
+The predefined variables should be defined in a configuration file
+They are probably equal for all house types.
+"""
+#Variables from Simulink model, dwelling mask (dwelling mask???????)
 #Floor and internal walls construction.
 #It is possible to choose between light, middle or heavy weight construction
 
@@ -117,8 +143,12 @@ else:                        # Heavy weight construction
     c_facade = 840             # Specific heat capacity construction [J/kgK]
     rho_facade = 2500          # Density construction in [kg/m3]
     th_facade = 0.2            # Construction thickness [m]
+"""
+Eight extra input parameters! Hardcoded!
+A configuration (*.ini) file is also a better place for these input variables
+"""
 
-
+# calculation part
 Aglass = sum(glass)          # Sum of all glass surfaces [m2]
 
 #Volume floor and internal walls construction [m3]
@@ -142,3 +172,10 @@ Rair_outdoor = 1/(A_facade*U+Aglass*Uglass+qm*c_air) # Resitance indoor air-outd
 # Calculation of the capacities
 Cair = rho_internal_mass*c_internal_mass*V_internal_mass/2+ rho_air*c_air*V_dwelling # Capacity indoor air + walls
 Cwall = rho_internal_mass*c_internal_mass*V_internal_mass/2                           # Capacity walls
+
+"""
+Thirty-three variables have been introduced in this module.
+This happens out-of-sight of the user, who must edit this script in order to change parameters.
+From Simulation.py, you have to look back into parameters.py to know the meaning of a parameter.
+How many colleagues and research partners are willing to do this?
+"""
