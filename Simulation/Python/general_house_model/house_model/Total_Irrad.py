@@ -15,27 +15,14 @@ from utils import nen5060_to_dataframe
 
 
 NUM = nen5060_to_dataframe(xl_tab_name="nen5060 - energie")
-"""
-#______________##________________________
-
-k=1 # select sheet 1 from NEN
-
-if k==1:
-    NUM = pd.read_excel(read_NEN.xls,'nen5060 - energie') # this file is part of NEN 5060 20018
-elif k==2:
-    NUM = pd.read_excel(read_NEN.xls,'ontwerp 1%')
-elif k==3:
-    NUM = pd.read_excel(read_NEN.xls,'ontwerp 5%')
-"""
 
 #Convert data frame to array
 to_array=NUM.to_numpy()
 # to_array=np.delete(to_array, 0, 0)  # removed patch
 
-#______________##________________________
-    
-dom=to_array[:,2] # day of month
-hod=to_array[:,3] # hour of day
+"""    
+dom=to_array[:,2]          # day of month
+hod=to_array[:,3]          # hour of day
 qglob_hor=to_array[:,4]
 qdiff_hor=to_array[:,5]
 qdir_hor=to_array[:,6]
@@ -43,11 +30,30 @@ qdir_nor=to_array[:,7]
 Toutdoor=to_array[:,8]/10
 phioutdoor=to_array[:,9]
 xoutdoor=to_array[:,10]/10
-pdamp=to_array[:,11]
-vwind=to_array[:,12]/10  #% at 10 m height
+pdamp=to_array[:,11]                            # wrong assignment
+vwind=to_array[:,12]/10                         # at 10 m height
 dirwind=to_array[:,13]
 cloud=to_array[:,14]/10
-rain=to_array[:,15]/10
+rain=to_array[:,15]/10                          # wrong assignment
+"""
+
+# assignment to numpy arrays directly from dataframe columns
+dom = NUM.loc[:,'DAY(datum)'].values                           # day of month
+hod = NUM.loc[:,'HOUR(uur)'].values                            # hour of day
+qglob_hor = NUM.loc[:,'globale_zonnestraling'].values          # global irradiation
+qdiff_hor = NUM.loc[:, 'diffuse_zonnestraling'].values         # diffuse irradiation
+qdir_hor = NUM.loc[:, 'directe_zonnestraling'].values          # direct irradiation
+qdir_nor = NUM.loc[:, 'directe_normale_zonnestraling'].values  # DNI
+Toutdoor = NUM.loc[:, 'temperatuur'].values / 10.0             # temperature
+phioutdoor = NUM.loc[:, 'relatieve_vochtigheid'].values        # %RH
+xoutdoor = NUM.loc[:, 'absolute_vochtigheid'].values / 10.0    # AH
+
+rain = NUM.loc[:, 'neerslaghoeveelheid'].values / 10.0         # precipitation
+vwind = NUM.loc[:, 'windsnelheid'].values / 10.0               # wind speed
+dirwind = NUM.loc[:, 'windrichting'].values                    # wind dir
+cloud = NUM.loc[:, 'bewolkingsgraad'].values / 8.0             # cloud coverage
+sunduration = NUM.loc[:, 'zonneschijnduur'].values / 10.0       # daily solar duration
+pdamp = NUM.loc[:, 'dampspanning'].values                      # vapour pressure
 
 #______________##__________________________
 
