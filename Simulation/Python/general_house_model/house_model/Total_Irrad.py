@@ -53,7 +53,7 @@ LST = np.floor((t / 3600) % 24)  # local time in hour : from 0 to 23:00
 # this result is a numpy stack with
 # 8760 rows (hours per year)
 # 9 columns (compass directions -90(E), -45(SE), 0(S), 45(SW), 90(W), 135(NW), 180(N), 225 (NE) plus horizontal)
-# 4 decks (diffuse, direct, global and total solar irradiation
+# 4 decks (diffuse, direct, global and total solar irradiation)
 E = np.zeros((8760, 9, 4))
 
 # ground albedo is ignored, hence the  input parameter for qsun is zero
