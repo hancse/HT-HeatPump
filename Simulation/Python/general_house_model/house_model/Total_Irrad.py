@@ -10,14 +10,15 @@
 import	numpy 		as np
 import	qsun  
 import	pandas 		as pd
-import	read_NEN
+# import	read_NEN
+from utils import nen5060_to_dataframe
 
 
-
+NUM = nen5060_to_dataframe(xl_tab_name="nen5060 - energie")
+"""
 #______________##________________________
 
 k=1 # select sheet 1 from NEN
-
 
 if k==1:
     NUM = pd.read_excel(read_NEN.xls,'nen5060 - energie') # this file is part of NEN 5060 20018
@@ -25,10 +26,11 @@ elif k==2:
     NUM = pd.read_excel(read_NEN.xls,'ontwerp 1%')
 elif k==3:
     NUM = pd.read_excel(read_NEN.xls,'ontwerp 5%')
-	
+"""
+
 #Convert data frame to array
 to_array=NUM.to_numpy()
-to_array=np.delete(to_array, 0, 0)
+# to_array=np.delete(to_array, 0, 0)  # removed patch
 
 #______________##________________________
     

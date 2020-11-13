@@ -38,6 +38,7 @@ g_value = 0.7
 # Time base on 1 hour sampling from NEN
 
 time = Irr.qsunS[0]
+# time = first row of Irr.qsunSouth (time axis) in seconds [0, 3600, 7200, ...]
 print("ID time: ", id(time), ", ID Irr.qsunS[0]: ", id(Irr.qsunS[0]))
 """ 
 the "new" variable time is NOT at the same memory address as 
