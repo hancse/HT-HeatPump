@@ -53,6 +53,8 @@ Qsolar = (Irr.qsunE[1]*glass[0] + Irr.qsunSE[1]*glass[1] +
                       Irr.qsunS[1]*glass[2] + Irr.qsunSW[1]*glass[3] + 
                       Irr.qsunW[1]*glass[4] + Irr.qsunNW[1]*glass[5] + 
                       Irr.qsunN[1]*glass[6] + Irr.qsunNE[1]*glass[7]) * g_value
+
+# with input NEN5060, glass and g_value, qsun can give a single result Qsolar
 			
 
 #Envelope surface (facade + roof + ground) [m2]
@@ -166,13 +168,16 @@ qm = qV*rho_air                    # Ventilation, mass air flow [kg/s]
 #Dwelling temperatures calculation
 #Calculation of the resistances
 
-Rair_wall = 1/(A_internal_mass*alpha_internal_mass)  # Resistance indoor air-wall
-U = 1/(1/alpha_i_facade+Rc_facade+1/alpha_e_facade)  # U-value indoor air-facade
-Rair_outdoor = 1/(A_facade*U+Aglass*Uglass+qm*c_air) # Resitance indoor air-outdoor air
+Rair_wall = 1.0 / (A_internal_mass * alpha_internal_mass)  # Resistance indoor air-wall
+
+U = 1.0 / (1.0 / alpha_i_facade + Rc_facade +1 / alpha_e_facade)  # U-value indoor air-facade
+
+Rair_outdoor = 1.0 / (A_facade * U + Aglass * Uglass + qm * c_air) # Resistance indoor air-outdoor air
 
 # Calculation of the capacities
-Cair = rho_internal_mass*c_internal_mass*V_internal_mass/2+ rho_air*c_air*V_dwelling # Capacity indoor air + walls
-Cwall = rho_internal_mass*c_internal_mass*V_internal_mass/2                           # Capacity walls
+Cair = rho_internal_mass * c_internal_mass * V_internal_mass /2.0 + rho_air * c_air * V_dwelling # Capacity indoor air + walls
+
+Cwall = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0                           # Capacity walls
 
 """
 Thirty-three variables have been introduced in this module.
