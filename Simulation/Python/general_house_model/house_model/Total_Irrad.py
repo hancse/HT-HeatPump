@@ -8,7 +8,7 @@
 """
 
 import numpy as np  # removed tabs
-import qsun
+from qsun import qsun
 # import pandas as pd
 # import read_NEN
 from utils import nen5060_to_dataframe
@@ -49,6 +49,8 @@ t = (np.array(list(range(0, 8760)))) * 3600  # hourly grid with one year timespa
 iday = 1 + np.floor(t / (24 * 3600))  # day of the year from t array: qsun assumes year starts with day 1
 LST = np.floor((t / 3600) % 24)  # local time in hour : from 0 to 23:00
 
+# 3. run qsun nine times in a loop
+
 # Define an empty matrix for the result of qsun
 # this result is a numpy stack with
 # 8760 rows (hours per year)
@@ -66,7 +68,7 @@ ground_albedo = 0
 # for k = 8 (horizontal surface) gamma is arbitrary (set to 90 degrees here), since beta = 0
 """
 
-# 3. run qsun nine times in a loop
+
 
 k = -1  # k starts at -1 because of "East comes First" convention
 for j in range(9):
@@ -79,7 +81,7 @@ for j in range(9):
     k = k + 1
 
     for i in range(8760):
-        temp = qsun.Irrad(qdiff_hor[i], qdir_nor[i], gamma, beta, ground_albedo, iday[i], LST[i])
+        temp = qsun(qdiff_hor[i], qdir_nor[i], gamma, beta, ground_albedo, iday[i], LST[i])
         # E[i][j]=qsun(t[i],qdiff_hor[i],qdir_nor[i],gamma,beta,rground)
         E[:, j][i] = temp
     # n=n+1

@@ -32,7 +32,7 @@ dimensions:
     #Envelope surface (facade + roof + ground) [m2] (A_facade)
     A_facade : 160.2
     #Floor and internal walls surface [m2]
-    A_internal_mass: 106+64
+    A_internal_mass: 170 # 106 + 64
     #Internal volume [m3]
     V_dwelling : 275.6
 

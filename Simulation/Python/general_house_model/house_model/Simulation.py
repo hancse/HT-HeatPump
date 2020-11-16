@@ -12,7 +12,7 @@ from house import house  # exposed function "house" in house module
 import parameters as par
 import internal_heat_gain as hg
 import Temperature_SP as sp
-import Total_Irrad as irrad  # unused module
+# import Total_Irrad as irrad  # unused module
 """
 The modules above are scripts. On import, these scripts are executed.
 Although this serial program structure works, it does not offer the benefits of using functions.
