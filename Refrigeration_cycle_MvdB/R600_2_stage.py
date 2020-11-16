@@ -12,17 +12,17 @@ HEOS = CoolProp.AbstractState('HEOS', refrigerant)
 evaporation_temp = 4 + 273.15
 condensation_temp = 70 + 273.15
 superheat_evap = 5
-superheat_intercooler = 10.3
+superheat_intercooler = 5
 
-subcooling_intercooler = 0
+subcooling_intercooler = 23
 isentropic_eff = 0.7
 compressor_loss = 0.1
 condensor_capacity = 50000
 
-DP_sup = 6230
+DP_sup = 2500
 DP_cond = 5000
 DP_sub = 5000
-DP_evap = 5000
+DP_evap = 500
 DP_int = 5000
 
 """----Evaporation----"""
@@ -283,9 +283,8 @@ plt.xlabel('Enthalpy [J/kg]')
 plt.ylabel('Pressure [kPa]')
 plt.yscale('log')
 plt.ylim(9e4,5e6)
-plt.xlim(280000,800000)
+plt.xlim((0.9*h10), (1.1*h4))
 plt.title('Refrigerant cycle for R600')
-
 
 """----------------------------------------------------"""
 

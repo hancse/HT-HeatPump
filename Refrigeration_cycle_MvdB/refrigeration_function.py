@@ -3,43 +3,47 @@ import math
 
 def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
 
-      # setting the gasses
+    # setting the gasses
     HEOS = CoolProp.AbstractState('HEOS', 'IsoButane')
 
     # Setting the variables
     evaporation_temp = evap_temp + 273.15
     condensation_temp = condens_temp + 273.15
-    superheat_evap = 10
-    superheat_intercooler = 10
+    superheat_evap = 5
+    superheat_intercooler = 5
 
     subcooling_intercooler = 5
     isentropic_eff = 0.7
     compressor_loss = 0.1
     condensor_capacity = condens_capacity
 
-    """----Evaporation----"""
+    DP_sup = 5000
+    DP_cond = 5000
+    DP_sub = 5000
+    DP_evap = 5000
+    DP_int = 5000
 
+    """----Evaporation----"""
     T1 = evaporation_temp
-    HEOS.specify_phase(CoolProp.iphase_gas)
     HEOS.update(CoolProp.QT_INPUTS, 1, T1)
+    HEOS.specify_phase(CoolProp.iphase_gas)
     P1 = HEOS.p()
     h1 = HEOS.hmass()
     s1 = HEOS.smass()
 
     """----Superheating----"""
 
-    P2 = P1
+    P2 = P1 - DP_sup
     T2 = superheat_evap + evaporation_temp
     HEOS.update(CoolProp.PT_INPUTS, P2, T2)
     h2 = HEOS.hmass()
     s2 = HEOS.smass()
 
     """----Intermediate stage pressuer calculation----"""
-
     T6 = condensation_temp
     HEOS.update(CoolProp.QT_INPUTS, 1, T6)
     P6 = HEOS.p()
-    P1a = math.sqrt(P1*P6)
+    P1a = math.sqrt(P2*P6)
 
     # Create inital guesses for T3s and s3s
     P3a = P1a
@@ -58,7 +62,6 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     h3a = HEOS.hmass()
 
     """----Discharge point lower stage----"""
-
     h4a = ((h3a-h2)/isentropic_eff) + h2
     P4a = P1a
     HEOS.update(CoolProp.PT_INPUTS, P4a, T3a)
@@ -76,7 +79,6 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s4a = HEOS.smass()
 
     """----Hot point lower stage----"""
-
     h5a = h4a - ((h4a - h2) * compressor_loss)
     P5a = P1a
     h2dummy = 1000
@@ -92,14 +94,12 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s5a = HEOS.smass()
 
     """---Intermediate boiling point----"""
-
     HEOS.update(CoolProp.PQ_INPUTS, P1a, 1)
     T1a = HEOS.T()
     h1a = HEOS.hmass()
     s1a = HEOS.smass()
 
     """---Intermediate superheat point----"""
-
     P2a = P1a
     HEOS.update(CoolProp.PQ_INPUTS, P2a, 1)
     T2a = HEOS.T() + superheat_intercooler
@@ -107,8 +107,7 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     h2a = HEOS.hmass()
     s2a = HEOS.smass()
 
-    """---100% isentopic compression upper stage---"""
-
+    """----100% isentopic compression upper stage----"""
     T3 = condensation_temp
     P3 = P6
 
@@ -127,7 +126,6 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     h3 = HEOS.hmass()
 
     """----Discharge point upper stage----"""
-
     h4 = ((h3-h2a)/isentropic_eff) + h2a
     P4 = P6
     HEOS.update(CoolProp.PT_INPUTS, P4, T6)
@@ -145,7 +143,6 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s4 = HEOS.smass()
 
     """----Hot point upper stage----"""
-
     h5 = h4-((h4-h2a)*compressor_loss)
     P5 = P4
     h5test = 1000
@@ -161,23 +158,20 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s5 = HEOS.smass()
 
     """---Condensation Point---"""
-
     HEOS.update(CoolProp.PQ_INPUTS, P6, 1)
     h6 = HEOS.hmass()
     s6 = HEOS.smass()
 
     """---Bubble point---"""
-
-    P7 = P6
+    P7 = P6 - DP_cond
     HEOS.specify_phase(CoolProp.iphase_gas)
     HEOS.update(CoolProp.PQ_INPUTS, P7, 0)
     h7 = HEOS.hmass()
     T7 = HEOS.T()
-    s7 = HEOS.smass()
+    s7 = HEOS.smass
 
     """----Subcooling point intercooler ----"""
-
-    P8a = P7
+    P8a = P7 - DP_sub
     HEOS.specify_phase(CoolProp.iphase_liquid)
     HEOS.update(CoolProp.PQ_INPUTS, P8a, 0)
     T8a = T7 - subcooling_intercooler
@@ -186,7 +180,6 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s8a = HEOS.smass()
 
     """----Subcooling point desuperheater----"""
-
     P8 = P8a
     h8 = h8a - (h2-h1)
     h8test = 1000
@@ -203,13 +196,11 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s8 = HEOS.smass()
 
     """----Flash point----"""
-
     h9 = h8
 
     """---I point----"""
-
     h10 = h9
-    P10 = P1
+    P10 = P1 + DP_evap
     HEOS.update(CoolProp.PQ_INPUTS, P10, 1)
     HEOS.specify_phase(CoolProp.iphase_gas)
     hg = HEOS.hmass()
@@ -224,8 +215,7 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s10 = HEOS.smass()
 
     """---Intermediate expansion part---"""
-
-    P10a = P1a
+    P10a = P1a + DP_int
     h10a = h8a
     HEOS.update(CoolProp.PQ_INPUTS, P10a, 1)
     HEOS.specify_phase(CoolProp.iphase_gas)
@@ -241,22 +231,31 @@ def refrigeration_cycle(evap_temp, condens_temp, condens_capacity):
     s10a = HEOS.smass()
 
     M = condensor_capacity/(h5-h7)
-    X_2 = (h2a-h10a-(h7-h8a))/(h4a-h10a)
+    X_2 = (h2a-h10a-(h7-h8a))/(h5a-h10a)
     m_2 = M*X_2
     m_1 = M - m_2
-    check_massflow = ((M-m_1)/M == m_2/M == X_2)
+    P11 = P10a
+    h11 = ((M/m_1)*(h7-h8a))+h10a
+    HEOS.update(CoolProp.HmassP_INPUTS, h11, P11)
+    s11 = HEOS.smass()
+    T11 = HEOS.T()
+
+    """---Intermediate Flash Point---"""
+    T11a = T1a
+    HEOS.specify_phase(CoolProp.iphase_liquid)
+    HEOS.update(CoolProp.QT_INPUTS, 0, T11a)
+    P11a = HEOS.p()
+    h11a = HEOS.hmass()
+    s11a = HEOS.smass()
+
     Compressor_power_lower_stage = (m_2*(h4a-h2))
     Compressor_power_higher_stage = (M*(h4-h2a))
     Total_compressor_power = Compressor_power_lower_stage + \
                              Compressor_power_higher_stage
-
     COP = condensor_capacity/Total_compressor_power
-    h_e_m = ((M/m_1)*(h7-h8a))+h10a
-
-    print("Total massflow:", round(M, 5), "[kg/s]")
-    print("Massflow evaporator:", round(m_2, 5), "[kg/s]")
-    print("Massflow intermediate stage:", round(m_1, 5), "[kg/s]")
-    print("Fraction of massflow through evaporator:", round(X_2*100, 3), "%")
-    print("COP:", round(COP, 4))
-    print("h_e_m:", round(h_e_m, 0), "J/kg")
     return COP
+
+test = refrigeration_cycle(4, 72, 50000)
+
+
+print(test)
