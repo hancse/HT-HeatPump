@@ -39,6 +39,15 @@ REFERENCES:
 # import math        all math functions replaced by numpy
 import numpy as np
 
+"""
+A problem with the current qsun routine is that the calling sequence has become a bit awkward.
+In Python function calls, the required input parameters must come before the optional parameters.
+The only optional parameter is rground, which is now in the middle.
+A new and better calling convention would be:
+def qsun(iday, LST, Dh, En, gamma, beta, rground=0.0):
+We should determine a good moment to carry out this change, which will require adaptation of all usage of qsun
+The change is therefore postponed to that suitable moment.
+"""
 
 def qsun(Dh, En, gamma, beta, rground, iday, LST):
     """ calculate direct, diffuse and reflected sunlight on a surface
