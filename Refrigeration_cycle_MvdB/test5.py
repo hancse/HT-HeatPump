@@ -43,6 +43,7 @@ for x0 in [0.5]:
         plt.xlim(100000,750000)
         plt.title('Refrigerant cycle for Propane/IsoButane Mixtures')
         plt.legend(loc='lower right', shadow=True)
+        plt.show()
     except ValueError as VE:
         print(VE)    
 

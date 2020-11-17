@@ -1,0 +1,9 @@
+conda create -n hpcycle python=3.7
+activate hpcycle
+conda install CoolProp
+     this also installs:
+	 matplotlib-base
+	 blas
+	 mkl
+	 numpy
+conda install prettytable
