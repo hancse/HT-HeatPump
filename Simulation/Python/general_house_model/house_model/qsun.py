@@ -40,7 +40,7 @@ REFERENCES:
 import numpy as np
 
 
-def Irrad(Dh, En, gamma, beta, rground, iday, LST):
+def qsun(Dh, En, gamma, beta, rground, iday, LST):
     """ calculate direct, diffuse and reflected sunlight on a surface
 
     Args:

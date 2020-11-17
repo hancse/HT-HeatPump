@@ -10,9 +10,14 @@ from house import house  # exposed function "house" in house module
 # import house as hs
 
 import parameters as par
-import internal_heat_gain as hg
-import Temperature_SP as sp
-import Total_Irrad as irrad  # unused module
+
+# import internal_heat_gain as hg
+from internal_heat_gain import internal_heat_gain
+
+# import Temperature_SP as sp
+from Temperature_SP import temp_sp
+
+# import Total_Irrad as irrad  # unused module
 """
 The modules above are scripts. On import, these scripts are executed.
 Although this serial program structure works, it does not offer the benefits of using functions.
@@ -27,13 +32,18 @@ def main():
     Qsolar_Sim = par.Qsolar[0:days_Sim * 24]
     # Qsolar_Sim = Qsolar[0:days_Sim*24]*0
 
-    Qinternal_Sim = hg.Qinternal[0:days_Sim * 24]
+    # Qinternal_Sim = hg.Qinternal[0:days_Sim * 24]
+    Qint = internal_heat_gain(400, 150, 8, 23)
+    Qinternal_Sim = Qint[0:days_Sim*24]
+
     # Qinst_Sim = Qinst_Sim[0:days_Sim*24][:,0]
     T_outdoor_Sim = par.Toutdoor[0:days_Sim * 24]
 
     # Set point
+    # SP_Sim = sp.SP[0:days_Sim * 24]
+    SP = temp_sp(8, 23, 17, 20, 7, 16, 8, 15, 18)
+    SP_Sim = SP[0:days_Sim * 24]
 
-    SP_Sim = sp.SP[0:days_Sim * 24]
     CF = par.CF
     Rair_outdoor = par.Rair_outdoor
     Rair_wall = par.Rair_wall

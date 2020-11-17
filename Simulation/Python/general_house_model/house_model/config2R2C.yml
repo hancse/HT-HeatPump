@@ -32,7 +32,7 @@ dimensions:
     #Envelope surface (facade + roof + ground) [m2] (A_facade)
     A_facade : 160.2
     #Floor and internal walls surface [m2]
-    A_internal_mass: 106+64
+    A_internal_mass: 170 # 106 + 64
     #Internal volume [m3]
     V_dwelling : 275.6
 
@@ -65,3 +65,36 @@ initial:
     alpha_e_facade : 23
     # to be defined
     alpha_internal_mass : 8
+
+internal:
+    # Internal heat difference between day and night [W]
+    delta_Q : 150
+    # Daytime internal heat generation [W]
+    Q_day : 400
+    # Presence from [hour]
+    t1 : 8
+    # Presence until [hour]
+    t2 : 23
+
+setpoint:
+    # Presence from [hour]
+    t1 : 8
+    # Presence until [hour]
+    t2 : 23
+    # Set temperature of thermostat at night from time t2
+    Night_T_SP : 17
+    # Set wishes temperature of thermostat
+    Day_T_SP : 20
+    # Define Wake up time
+    # Define wake up time in the morning, temperature set to 20
+    Wu_time : 7
+    duty_wu : 16
+    # Go to work time/ leave the house
+    # Define time that people go to work.
+    Work_time : 8
+    duty_w   : 15
+    # Back to home
+    #Define time that people back from work 18:00
+    back_home : 18
+
+
