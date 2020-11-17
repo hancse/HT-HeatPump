@@ -9,7 +9,6 @@ from CoolProp.CoolProp import PropsSI
 from CoolProp.Plots import PropertyPlot
 from CoolProp.Plots import StateContainer
 
-
 #Evaporator chracteristics
 gas = 'R290'
 isentropic_eff=0.7
@@ -121,9 +120,7 @@ cycle_states[7]['S'] = s1
 cycle_states[7][CoolProp.iP] = P1
 cycle_states[7,CoolProp.iT] = T1
 
-
 print(cycle_states)
-
 
 pp = PropertyPlot(gas, 'PH', unit_system='EUR',tp_limits='ACHP')
 pp.calc_isolines()
