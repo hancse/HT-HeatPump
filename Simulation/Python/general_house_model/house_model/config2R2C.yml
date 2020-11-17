@@ -65,3 +65,14 @@ initial:
     alpha_e_facade : 23
     # to be defined
     alpha_internal_mass : 8
+
+internal:
+    # Internal heat difference between day and night [W]
+    delta_Q : 150
+    # Daytime internal heat generation [W]
+    Q_day : 400
+     # Presence from [hour]
+     t1 : 8
+     # Presence until [hour]
+     t2 : 23
+

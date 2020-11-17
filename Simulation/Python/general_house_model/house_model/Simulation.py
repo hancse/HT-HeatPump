@@ -10,7 +10,10 @@ from house import house  # exposed function "house" in house module
 # import house as hs
 
 import parameters as par
-import internal_heat_gain as hg
+
+# import internal_heat_gain as hg
+from internal_heat_gain import internal_heat_gain
+
 import Temperature_SP as sp
 # import Total_Irrad as irrad  # unused module
 """
@@ -27,7 +30,10 @@ def main():
     Qsolar_Sim = par.Qsolar[0:days_Sim * 24]
     # Qsolar_Sim = Qsolar[0:days_Sim*24]*0
 
-    Qinternal_Sim = hg.Qinternal[0:days_Sim * 24]
+    # Qinternal_Sim = hg.Qinternal[0:days_Sim * 24]
+    Qint = internal_heat_gain(400, 150, 8, 23)
+    Qinternal_Sim = Qint[0:days_Sim*24]
+
     # Qinst_Sim = Qinst_Sim[0:days_Sim*24][:,0]
     T_outdoor_Sim = par.Toutdoor[0:days_Sim * 24]
 
