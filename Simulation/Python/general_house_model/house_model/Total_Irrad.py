@@ -11,7 +11,7 @@ import numpy as np  # removed tabs
 from qsun import qsun
 # import pandas as pd
 # import read_NEN
-from utils import nen5060_to_dataframe
+from NEN5060 import nen5060_to_dataframe
 
 # 1. reading of the NEN5060 and assignment to local variables
 # assignment to local variables is not really necessary
