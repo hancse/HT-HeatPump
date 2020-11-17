@@ -14,7 +14,9 @@ import parameters as par
 # import internal_heat_gain as hg
 from internal_heat_gain import internal_heat_gain
 
-import Temperature_SP as sp
+# import Temperature_SP as sp
+from Temperature_SP import temp_sp
+
 # import Total_Irrad as irrad  # unused module
 """
 The modules above are scripts. On import, these scripts are executed.
@@ -38,8 +40,10 @@ def main():
     T_outdoor_Sim = par.Toutdoor[0:days_Sim * 24]
 
     # Set point
+    # SP_Sim = sp.SP[0:days_Sim * 24]
+    SP = temp_sp(8, 23, 17, 20, 7, 16, 8, 15, 18)
+    SP_Sim = SP[0:days_Sim * 24]
 
-    SP_Sim = sp.SP[0:days_Sim * 24]
     CF = par.CF
     Rair_outdoor = par.Rair_outdoor
     Rair_wall = par.Rair_wall
