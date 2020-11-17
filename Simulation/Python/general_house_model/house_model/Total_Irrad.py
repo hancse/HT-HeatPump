@@ -73,6 +73,7 @@ ground_albedo = 0
 
 k = -1  # k starts at -1 because of "East comes First" convention
 for j in range(9):
+    print(j)
     if k < 7:
         gamma = 45 * (k - 1)  # gamma -90 (E), -45 (SE), 0 (S), 45 (SW), 90 (W), 135 (NW), 180 (N), 225 (NE)
         beta = 90
