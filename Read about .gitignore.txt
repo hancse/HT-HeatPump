@@ -1,0 +1,9 @@
+The .gitignore file contains the names of the files you do NOT want to be under version control.
+It is located in the root of the repository.
+The gitignore file contains:
+
+.gitignore     (it is information about your local files)
+.ipynb_checkpoints (local bookkeeping if you run a Jupyter notebook)
+.idea (local bookkeeping of PyCharm IDE)
+__pycache__ (folder with precompiled python code which makes it run faster after the first run)
+
