@@ -15,7 +15,7 @@ glass:
     g_value : 0.7
 
 timing:
-    days_sim : 20
+    days_sim : 5
     interval : NEN5060
     unit : ss
 
@@ -96,5 +96,23 @@ setpoint:
     # Back to home
     #Define time that people back from work 18:00
     back_home : 18
+
+radiator:
+    # U-value of the radiator
+    Urad : 30
+    # Area of the radiator
+    Arad : 10
+    # Cp value fo water
+    cpwater : 4180
+    #Volume of the radiator
+    volume_rad : 50
+    #Capacity of the radiator
+    Crad : (volume_rad * cpwater)
+    #density of the water
+    rhowater : 1000
+    #Capacity of the buffervessel
+    Cmid : (cpwater*volumeMid*rhowater)
+    
+    
 
 
