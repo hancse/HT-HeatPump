@@ -88,13 +88,13 @@ setpoint:
     # Define Wake up time
     # Define wake up time in the morning, temperature set to 20
     Wu_time : 7
-    duty_wu : 16
     # Go to work time/ leave the house
     # Define time that people go to work.
     Work_time : 8
-    duty_w   : 15
     # Back to home
     #Define time that people back from work 18:00
     back_home : 18
+    #Define time when heating system turn off during day_off time
+    heating_off_time : 22
 
 
