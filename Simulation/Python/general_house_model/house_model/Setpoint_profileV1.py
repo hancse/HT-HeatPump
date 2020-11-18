@@ -30,6 +30,8 @@ def thermostat_sp(t1,t2,Night_T_SP,Day_T_SP,Wu_time,not_at_home,back_home):
         back_home:    Define time that people back from work 18:00
 
     Returns:
+        
+        SP:           Temperature SP profile
 
     """
 
