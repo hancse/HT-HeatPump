@@ -53,7 +53,7 @@ def model(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, R
 
 # Initial Conditions for the States
 def house(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
-          Rair_outdoor, Rair_wall, Cair, Cwall):
+          Rair_outdoor, Rair_wall, Cair, Cwall, controller):
     """Compute air and wall tempearature inside the house.
 
     :param T_outdoor:    (array):  Outdoor temperature in degree C
@@ -87,7 +87,7 @@ def house(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
     Tair = np.ones(len(t)) * Tair0
     Twall = np.ones(len(t)) * Twall0
     consumption = np.ones(len(t))
-    kp = 7000
+    kp = controller
     for i in range(len(t)-1):
 
         err = SP_T[i+1] - Tair[i]

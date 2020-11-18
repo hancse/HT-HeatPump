@@ -91,10 +91,23 @@ setpoint:
     # Go to work time/ leave the house
     # Define time that people go to work.
     Work_time : 8
+    # Define time that people go out for shopping.
+    shopping_time : 13
     # Back to home
     #Define time that people back from work 18:00
-    back_home : 18
-    #Define time when heating system turn off during day_off time
-    heating_off_time : 22
+    back_home_from_work : 18
+    #Define time that people back from work 18:00
+    back_home : 15
+
+controller:
+    # propotional gain
+    kp : 7000
+    # intergal
+    ki : 0
+    # derivative
+    kd : 0
+   
+
+   
 
 
