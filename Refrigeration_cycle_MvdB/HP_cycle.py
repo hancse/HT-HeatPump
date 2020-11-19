@@ -107,10 +107,10 @@ cycle_states[7,CoolProp.iT] = T1
 Qdot_condensor_calculated = (h2-h4)*massflow
 
 print(cycle_states)
-print(Qdot_condensor_expected)
-print(Qdot_condensor_calculated)
-print(Expected_COP)
-print(Qdot_condensor_calculated/compressor_power)
+print("Qdot (expected): %0.1f" % Qdot_condensor_expected)
+print("Qdot (calculated): %0.1f" % Qdot_condensor_calculated)
+print("Expected COP: %0.2f" % Expected_COP)
+print("Ratio (Qdot (calculated)/P): %0.3f" % (Qdot_condensor_calculated/compressor_power))
 
 
 pp = PropertyPlot(gas, 'PH', unit_system='EUR',tp_limits='ACHP')
