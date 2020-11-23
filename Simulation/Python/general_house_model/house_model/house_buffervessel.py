@@ -93,14 +93,14 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
     Treturn = np.ones(len(t)) * Treturn0
     Tbuffervessel = np.ones(len(t)) * Tbuffervessel0
     consumption = np.ones(len(t))
-    kp = 700
+    kp = 300
     
     for i in range(len(t)-1):
 
         err = 80 - Tbuffervessel[i]
         err2 = SP_T[i+1] - Tair[i]
         Qinst = err * kp
-        Qinst = np.clip(Qinst, 0, 7000)
+        Qinst = np.clip(Qinst, 0, 12000)
         
         if (err2 > 0):
             mdot = 0.1
