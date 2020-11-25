@@ -5,7 +5,7 @@ Created on Tue Nov 10 12:05:19 2020
 @author: TrungNguyen, PvK, MvdB
 """
 from numpy import trapz
-from house_buffervessel import house_buffervessel  # exposed function "house" in house module
+from house_buffervessel_with_radiator import house_buffervessel_with_radiator  # exposed function "house" in house module
 # function "model" in module house is private
 
 from configurator import load_config, calculateRC
@@ -26,7 +26,7 @@ def main():
 
     df_nen = nen5060_to_dataframe()
     df_irr = run_qsun(df_nen)
-    print(df_irr.head())
+    #print(df_irr.head())
 
     time_sim = df_irr.iloc[0:days_sim*24, 0].values
 
@@ -62,17 +62,18 @@ def main():
     SP_sim = SP[0:days_sim * 24]
 
     # solve ODE
-    data = house_buffervessel(T_outdoor_sim, Qinternal_sim, Qsolar_sim, SP_sim, time_sim,
+    data = house_buffervessel_with_radiator(T_outdoor_sim, Qinternal_sim, Qsolar_sim, SP_sim, time_sim,
                  CF, Rair_outdoor, Rair_wall, Cair, Cwall)
 
     # plot the results
     plt.figure(figsize=(15, 5))         # key-value pair: no spaces
     plt.plot(data[0], label='Tair')
     #plt.plot(data[1], label='Twall')
-    #plt.plot(data[2], label='Treturn')
+    plt.plot(data[2], label='Treturn')
     plt.plot(data[3], label='Tbuffervessel')
     plt.plot(SP_sim, label='SP_Temperature')
     plt.plot(T_outdoor_sim,label='Toutdoor')
+    #plt.plot(data[5],label='radiatorpower')
     plt.legend(loc='best')
     plt.show()
     

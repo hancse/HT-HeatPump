@@ -5,7 +5,15 @@ house model base on 2R2C model with a buffervessel and a radiator
 from scipy.integrate import odeint       # ODE solver
 import numpy as np                       # linear algebra
 
-def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot):
+def radiator_power(Q50, Tradiatorin, Tradiatorout, Troom, nrad):
+    asdf = Tradiatorout-Troom
+    if(asdf<=0):
+        radiator = 0
+    else:
+        radiator=(Q50*((Tradiatorin-Tradiatorout)/((np.log(Tradiatorin-Troom)-np.log(asdf))*49.32))**nrad)
+    return radiator
+
+def model_buffervessel_with_radiator(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot):
     """model function for scipy.integrate.odeint.
 
     :param x: variable array dependent on time
@@ -44,18 +52,20 @@ def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Ra
     volumeBuffervessel = 0.150
     rhowater = 1000
     Cbuffervessel = cpwater*volumeBuffervessel*rhowater
+    Q50 = 7000
+    nrad = 1.33
     
     # Equations :
         
-    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + Urad*Arad*(Treturn-Tair) + Q_internal + CF * Q_solar) / Cair
+    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + radiator_power(Q50, Tbuffervessel, Treturn, Tair, nrad) + Q_internal + CF * Q_solar) / Cair
     Twalldt = ((Tair - Twall) / Rair_wall + (1 - CF) * Q_solar) / Cwall
-    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) + Urad*Arad*(Tair-Treturn)) / Crad
+    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) - radiator_power(Q50, Tbuffervessel, Treturn, Tair, nrad)) / Crad
     Tbuffervesseldt = (Qinst + (cpwater*mdot*(Treturn-Tbuffervessel)))/Cbuffervessel
 
     return [Tairdt, Twalldt, Treturndt, Tbuffervesseldt]
 
 
-def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
+def house_buffervessel_with_radiator(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
           Rair_outdoor, Rair_wall, Cair, Cwall):
     """Compute air and wall tempearature inside the house.
 
@@ -93,6 +103,7 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
     Treturn = np.ones(len(t)) * Treturn0
     Tbuffervessel = np.ones(len(t)) * Tbuffervessel0
     consumption = np.ones(len(t))
+    radiatorpower = np.ones(len(t))
     kp = 300
     
     for i in range(len(t)-1):
@@ -110,7 +121,7 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
         inputs = (T_outdoor[i], Q_internal[i], Q_solar[i], SP_T[i], Qinst, CF,
                   Rair_outdoor, Rair_wall, Cair, Cwall, mdot)
         ts = [t[i], t[i+1]]
-        y = odeint(model_buffervessel, y0, ts, args=inputs)
+        y = odeint(model_buffervessel_with_radiator, y0, ts, args=inputs)
 
         Tair[i+1] = y[-1][0]
         Twall[i+1] = y[-1][1]
@@ -120,5 +131,6 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
         # Adjust initial condition for next loop
         y0 = y[-1]
         consumption[i] = Qinst
-    return Tair, Twall, Treturn, Tbuffervessel, consumption
+        radiatorpower[i] = radiator_power(12000, 80, Treturn[i+1], Tair[i+1], 1.33)
+    return Tair, Twall, Treturn, Tbuffervessel, consumption, radiatorpower
 
