@@ -2,7 +2,7 @@
 """
 Created on Tue Nov 10 12:05:19 2020
 
-@author: TrungNguyen, PvK
+@author: TrungNguyen, PvK, MvdB
 """
 from house import house  # exposed function "house" in house module
 # function "model" in module house is private
