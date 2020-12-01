@@ -11,8 +11,8 @@ from configurator import load_config, calculateRC
 from NEN5060      import nen5060_to_dataframe, run_qsun
 
 from internal_heat_gain import internal_heat_gain
-from Temperature_SP     import temp_sp
-from Setpoint_profileV1     import thermostat_sp, SP_profile
+#from Temperature_SP     import temp_sp
+from Temperature_SP     import thermostat_sp, SP_profile
 
 import matplotlib.pyplot as plt
 
@@ -41,6 +41,7 @@ def main():
               df_irr.total_NE * house_param['glass']['NE']).values
     Qsolar *= house_param['glass']['g_value']
     Qsolar_sim = Qsolar[0:days_sim*24]
+    
     #print(len(Qsolar_sim))
 
     Qint = internal_heat_gain(house_param['internal']['Q_day'],

@@ -4,13 +4,13 @@ dirs:
 model:
 
 glass:
-    E : 0
+    E  : 9.5
     SE : 0
-    S : 9.5
+    S  : 0
     SW : 0
-    W : 0
+    W  : 9.5
     NW : 0
-    N : 9.5
+    N  : 0
     NE : 0
     g_value : 0.7
 
