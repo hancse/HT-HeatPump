@@ -84,8 +84,11 @@ setpoint:
     # Set temperature of thermostat at night from time t2
     Night_T_SP : 17
     # Set wishes temperature of thermostat
-    Day_T_SP : 20
-    # Define Wake up time
+    Day_T_SP   : 20
+    # Set the temperature when people are not at home
+    Flex_T_SP_dayoff   : 18
+    Flex_T_SP_workday  : 17
+    # Define Wake up time    
     # Define wake up time in the morning, temperature set to 20
     Wu_time : 7
     # Go to work time/ leave the house
