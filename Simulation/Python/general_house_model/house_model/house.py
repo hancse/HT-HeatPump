@@ -44,7 +44,9 @@ def model(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, R
     #     #m.Equation(Integl.dt()==err )
 
     # ___________
-    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + Qinst + Q_internal + CF * Q_solar) / Cair
+    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall 
+              + Qinst + Q_internal + CF * Q_solar) / Cair
+    
     Twalldt = ((Tair - Twall) / Rair_wall + (1 - CF) * Q_solar) / Cwall
 
     # Return array.astype(np.float64).ravel()
@@ -53,7 +55,7 @@ def model(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, R
 
 # Initial Conditions for the States
 def house(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
-          Rair_outdoor, Rair_wall, Cair, Cwall):
+          Rair_outdoor, Rair_wall, Cair, Cwall, controller):
     """Compute air and wall tempearature inside the house.
 
     :param T_outdoor:    (array):  Outdoor temperature in degree C
@@ -87,12 +89,17 @@ def house(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
     Tair = np.ones(len(t)) * Tair0
     Twall = np.ones(len(t)) * Twall0
     consumption = np.ones(len(t))
-    kp = 7000
+    kp = controller
     for i in range(len(t)-1):
 
         err = SP_T[i+1] - Tair[i]
         Qinst = err * kp
         Qinst = np.clip(Qinst, 0, 7000)
+        
+        if (T_outdoor[i]>= 15):
+            Qinst=0
+        else:
+            Qinst=Qinst
 
         inputs = (T_outdoor[i], Q_internal[i], Q_solar[i], SP_T[i], Qinst, CF,
                   Rair_outdoor, Rair_wall, Cair, Cwall)

@@ -4,13 +4,13 @@ dirs:
 model:
 
 glass:
-    E : 0
+    E  : 9.5
     SE : 0
-    S : 9.5
+    S  : 0
     SW : 0
-    W : 0
+    W  : 9.5
     NW : 0
-    N : 9.5
+    N  : 0
     NE : 0
     g_value : 0.7
 
@@ -84,18 +84,34 @@ setpoint:
     # Set temperature of thermostat at night from time t2
     Night_T_SP : 17
     # Set wishes temperature of thermostat
-    Day_T_SP : 20
-    # Define Wake up time
+    Day_T_SP   : 20
+    # Set the temperature when people are not at home
+    Flex_T_SP_dayoff   : 18
+    Flex_T_SP_workday  : 17
+    # Define Wake up time    
     # Define wake up time in the morning, temperature set to 20
     Wu_time : 7
-    duty_wu : 16
     # Go to work time/ leave the house
     # Define time that people go to work.
     Work_time : 8
-    duty_w   : 15
+    # Define time that people go out for shopping.
+    shopping_time : 13
     # Back to home
     #Define time that people back from work 18:00
-    back_home : 18
+    back_home_from_work : 18
+    #Define time that people back from work 18:00
+    back_home : 15
+
+controller:
+    # propotional gain
+    kp : 7000
+    # intergal
+    ki : 0
+    # derivative
+    kd : 0
+   
+
+   
 
 radiator:
     # U-value of the radiator
