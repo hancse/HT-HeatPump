@@ -8,10 +8,22 @@ from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 
 
-## NOG NIET KLAAR!!! PvK
-
-
 def defrost8800(T_evap, COP_par, COP_A2W35=None ):
+    """
+    calculate reduction in COP by frosting of heat pump at evaporator
+
+    :param T_evap:     temperature at evaporator side ( outdoor temperature
+    :param COP_par:    tuple of 3 coefficients for COP of heat pump model
+    :param COP_A2W35:  COP measured at Tevap = 2 degrees and Tcond = 35 degrees, if available
+    :return: frost_factor:
+
+    The  COP then becomes:
+    COP_HP(T_evap, T_cond) = COP_HP_no_frost(T_evap, T_cond) * frost factor(T_evap)
+    The Power becomes:
+    Power_HP(T_evap, T_cond)  = Power_HP_no_frost(T_evap, T_cond)  * frost factor(T_evap)
+    Remark: no separate frost factor for the power is specified. This is an approximation!
+    These measurements are valid for full power
+    """
     Tevap_ref = 2 # degrees Celsius
     Tcond_ref = 35 # degrees Celsius
     COP_nofrost = COP_par[0] + COP_par[1] * Tevap_ref + COP_par[2] * Tcond_ref
@@ -22,19 +34,11 @@ def defrost8800(T_evap, COP_par, COP_A2W35=None ):
 
     # The correction for frosting Frost_factor( T_air )  now becomes:
     if (T_evap <= -7) or (T_evap >= 7):
-        frost_factor = 1
+        frost_factor = 1.0
     elif T_evap <= 2:
-        frost_factor =  ((T_evap + 7) /9) * frost_factor_0
+        frost_factor = ((frost_factor_0 - 1.0) / 9.0) *T_evap + (( 7 * frost_factor_0 + 2.0) / 9.0)
     else:
-        frost_factor = ((7- T_evap) / 5) * frost_factor_0
-
-
-    # The  COP then becomes:
-    # COP_HP(T_air, T_water) = COP_HP_no_frost(T_air, T_water) * Frost factor( t_air)
-    # The Power becomes:
-    # Power_HP(T_air, T_water)  = Power_HP_no_frost(T_air, T_water)  * Frost factor( t_air)
-    # Remark: no separate frost factor for the power is specified. This is an approximation!
-    # These measurements are valid for full power
+        frost_factor = ((1.0 - frost_factor_0) / 5.0) *T_evap + (( 7 * frost_factor_0 - 2.0) / 5.0)
 
     return frost_factor
 
@@ -49,5 +53,10 @@ if __name__ == "__main__":
         list.append(defrost8800(T, par))
 
     fig = plt.figure()
+    plt.suptitle("COP reduction factor due to defrosting of heat pump evaporator")
+    plt.title("according to NTA8800:2020, Appendix Q (Q.18-Q.19)")
     plt.plot(Tair, list)
+    plt.xlim(-10, 10)
+    plt.xticks(np.arange(-10, 12, step=2.0))
+    plt.grid()
     plt.show()
