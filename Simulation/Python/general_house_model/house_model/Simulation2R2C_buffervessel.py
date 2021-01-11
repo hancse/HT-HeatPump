@@ -4,7 +4,6 @@ Created on Tue Nov 10 12:05:19 2020
 
 @author: TrungNguyen, PvK, MvdB
 """
-from numpy import trapz
 from house_buffervessel import house_buffervessel  # exposed function "house" in house module
 # function "model" in module house is private
 
@@ -12,10 +11,9 @@ from configurator import load_config, calculateRC
 from NEN5060 import nen5060_to_dataframe, run_qsun
 
 from internal_heat_gain import internal_heat_gain
-from Temperature_SP import temp_sp
+from Temperature_SP     import thermostat_sp, SP_profile
 
 import matplotlib.pyplot as plt
-
 
 def main():
     house_param = load_config("config2R2C.yml")
@@ -50,17 +48,27 @@ def main():
     Toutdoor = df_nen.loc[:, 'temperatuur'].values / 10.0  # temperature
     T_outdoor_sim = Toutdoor[0:days_sim*24]
 
-    SP = temp_sp(house_param['setpoint']['t1'],
-                 house_param['setpoint']['t2'],
-                 house_param['setpoint']['Night_T_SP'],
-                 house_param['setpoint']['Day_T_SP'],
-                 house_param['setpoint']['Wu_time'],
-                 house_param['setpoint']['duty_wu'],
-                 house_param['setpoint']['Work_time'],
-                 house_param['setpoint']['duty_w'],
-                 house_param['setpoint']['back_home'])
+    week_day_setpoint = thermostat_sp(house_param['setpoint']['t1'],
+                                         house_param['setpoint']['t2'],
+                                         house_param['setpoint']['Night_T_SP'],
+                                         house_param['setpoint']['Day_T_SP'],
+                                         house_param['setpoint']['Flex_T_SP_workday'],
+                                         house_param['setpoint']['Wu_time'],
+                                         house_param['setpoint']['Work_time'],
+                                         house_param['setpoint']['back_home_from_work'])
+    
+    day_off_setpoint  = thermostat_sp(house_param['setpoint']['t1'],
+                                         house_param['setpoint']['t2'],
+                                         house_param['setpoint']['Night_T_SP'],
+                                         house_param['setpoint']['Day_T_SP'],
+                                         house_param['setpoint']['Flex_T_SP_dayoff'],
+                                         house_param['setpoint']['Wu_time'],
+                                         house_param['setpoint']['shopping_time'],
+                                         house_param['setpoint']['back_home'])
+    
+    SP =SP_profile(week_day_setpoint,day_off_setpoint)
+    
     SP_sim = SP[0:days_sim * 24]
-
     # solve ODE
     data = house_buffervessel(T_outdoor_sim, Qinternal_sim, Qsolar_sim, SP_sim, time_sim,
                  CF, Rair_outdoor, Rair_wall, Cair, Cwall)
@@ -75,10 +83,7 @@ def main():
     plt.plot(T_outdoor_sim,label='Toutdoor')
     plt.legend(loc='best')
     plt.show()
+
     
-    area = trapz(data[4], dx=1)
-    print(area)
-
-
 if __name__ == "__main__":
     main()  # temporary solution, recommended syntax

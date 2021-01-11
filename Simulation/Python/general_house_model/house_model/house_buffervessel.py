@@ -8,20 +8,20 @@ import numpy as np                       # linear algebra
 def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot):
     """model function for scipy.integrate.odeint.
 
-    :param x: variable array dependent on time
-    :param t:
-    :param T_outdoor:
-    :param Q_internal:
-    :param Q_solar:
-    :param SP_T:
-    :param Qinst:
-    :param CF:
-    :param Rair_outdoor:
-    :param Rair_wall:
-    :param Cair:
-    :param Cwall:
-    :param mdot:
-    :return:
+    :param x:            (array):   variable array dependent on time with the vairable Air temperature, Wall temperature Return water temperature and buffervessel temperature
+    :param t:            (float):
+    :param T_outdoor:    (float):  Outdoor temperature in degree C
+    :param Q_internal:   (float):  Internal heat gain in w.
+    :param Q_solar:      (float):  Solar irradiation on window [W]
+    :param SP_T:         (float):  Setpoint tempearature from thermostat.
+    :param Qinst:        (float):  Heating power delivered to the buffervessel
+    :param CF:           (float):  factor of Q_solar heat transferred to the air
+    :param Rair_outdoor: (float):  Heat resistance from indoor air to outdoor air
+    :param Rair_wall:    (float):  Heat resistance from indoor air to the wall
+    :param Cair:         (float):  Heat capacity of the air
+    :param Cwall:        (float):  Heat capacity of the wall
+    :param mdot:         (float):  waterflow in the radiator [kg/s]
+    :return:             (array):  Difference over of the variables in x      
 
     x,t: ode input function func : callable(x, t, ...) or callable(t, x, ...)
     Computes the derivative of y at t.
@@ -30,12 +30,13 @@ def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Ra
 
     # States :
 
-    Tair = x[0]  # Temperature Buffer Tank (K)
-    Twall = x[1]  # Return Temperature to Floor (K)
+    Tair = x[0]
+    Twall = x[1]
     Treturn = x[2]
     Tbuffervessel = x[3]
     
     #Parameters that should be in the dict
+    
     Urad = 30
     Arad = 10
     cpwater = 4180
