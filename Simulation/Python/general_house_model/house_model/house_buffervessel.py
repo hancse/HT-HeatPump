@@ -5,22 +5,23 @@ house model base on 2R2C model with a buffervessel and a radiator
 from scipy.integrate import odeint       # ODE solver
 import numpy as np                       # linear algebra
 
-def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot):
+def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot, UAradiator, Crad, Cbuffervessel, cpwater):
     """model function for scipy.integrate.odeint.
 
     :param x:            (array):   variable array dependent on time with the vairable Air temperature, Wall temperature Return water temperature and buffervessel temperature
     :param t:            (float):
     :param T_outdoor:    (float):  Outdoor temperature in degree C
-    :param Q_internal:   (float):  Internal heat gain in w.
+    :param Q_internal:   (float):  Internal heat gain in [W]
     :param Q_solar:      (float):  Solar irradiation on window [W]
-    :param SP_T:         (float):  Setpoint tempearature from thermostat.
-    :param Qinst:        (float):  Heating power delivered to the buffervessel
-    :param CF:           (float):  factor of Q_solar heat transferred to the air
-    :param Rair_outdoor: (float):  Heat resistance from indoor air to outdoor air
-    :param Rair_wall:    (float):  Heat resistance from indoor air to the wall
-    :param Cair:         (float):  Heat capacity of the air
-    :param Cwall:        (float):  Heat capacity of the wall
+    :param SP_T:         (float):  Setpoint tempearature from thermostat. [C]
+    :param Qinst:        (float):  Heating power delivered to the buffervessel [W]
+    :param CF:           (float):  factor of Q_solar heat transferred to the air (Unitless)
+    :param Rair_outdoor: (float):  Thermal resistance from indoor air to outdoor air [K/W]
+    :param Rair_wall:    (float):  Thermal resistance from indoor air to the wall [K/W]
+    :param Cair:         (float):  Thermal capacity of the air
+    :param Cwall:        (float):  Thermal capacity of the wall
     :param mdot:         (float):  waterflow in the radiator [kg/s]
+    :param UAradiator    (float):  Heat transfer coeffiecient of the radiator 
     :return:             (array):  Difference over of the variables in x      
 
     x,t: ode input function func : callable(x, t, ...) or callable(t, x, ...)
@@ -34,30 +35,19 @@ def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, Qinst, CF, Ra
     Twall = x[1]
     Treturn = x[2]
     Tbuffervessel = x[3]
-    
-    #Parameters that should be in the dict
-    
-    Urad = 30
-    Arad = 10
-    cpwater = 4180
-    volumeRadiator = 50
-    Crad = volumeRadiator * 4180
-    volumeBuffervessel = 0.150
-    rhowater = 1000
-    Cbuffervessel = cpwater*volumeBuffervessel*rhowater
-    
+ 
     # Equations :
         
-    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + Urad*Arad*(Treturn-Tair) + Q_internal + CF * Q_solar) / Cair
+    Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + UAradiator*(Treturn-Tair) + Q_internal + CF * Q_solar) / Cair
     Twalldt = ((Tair - Twall) / Rair_wall + (1 - CF) * Q_solar) / Cwall
-    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) + Urad*Arad*(Tair-Treturn)) / Crad
+    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) + UAradiator*(Tair-Treturn)) / Crad
     Tbuffervesseldt = (Qinst + (cpwater*mdot*(Treturn-Tbuffervessel)))/Cbuffervessel
 
     return [Tairdt, Twalldt, Treturndt, Tbuffervesseldt]
 
 
 def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
-          Rair_outdoor, Rair_wall, Cair, Cwall):
+          Rair_outdoor, Rair_wall, Cair, Cwall, mdot, UAradiator, Crad, Cbuffervessel, cpwater):
     """Compute air and wall tempearature inside the house.
 
     :param T_outdoor:    (array):  Outdoor temperature in degree C
@@ -109,7 +99,7 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
             mdot = 0
 
         inputs = (T_outdoor[i], Q_internal[i], Q_solar[i], SP_T[i], Qinst, CF,
-                  Rair_outdoor, Rair_wall, Cair, Cwall, mdot)
+                  Rair_outdoor, Rair_wall, Cair, Cwall, mdot, UAradiator, Crad, Cbuffervessel, cpwater)
         ts = [t[i], t[i+1]]
         y = odeint(model_buffervessel, y0, ts, args=inputs)
 

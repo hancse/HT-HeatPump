@@ -114,21 +114,21 @@ controller:
    
 
 radiator:
-    # U-value of the radiator
+    # Heat transfer coefficient of the radiator
     Urad : 30
     # Area of the radiator
     Arad : 10
-    # Cp value fo water
+    # Cp value of water
     cpwater : 4180
     #Volume of the radiator
-    volume_rad : 50
-    #Capacity of the radiator
-    Crad : (volume_rad * cpwater)
+    volume_rad : 0.050
     #density of the water
     rhowater : 1000
-    #Capacity of the buffervessel
-    Cmid : (cpwater*volumeMid*rhowater)
-    
+    #Volume of the buffervessel
+    volume_buffervessel : 0.150
+    #Waterflow through the radiator
+    mdot : 0.150     
+     
     
 
 

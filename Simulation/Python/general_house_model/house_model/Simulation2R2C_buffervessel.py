@@ -21,6 +21,24 @@ def main():
     CF = house_param['ventilation']['CF']
     Rair_wall, Cwall, Rair_outdoor, Cair = calculateRC(house_param)
     print(days_sim)
+    
+    #Loading the radiator and buffervessel parameters
+    #Heat transfer coefficient of the radiator and het capacity
+    cpwater = house_param['radiator']['cpwater']
+    rhowater = house_param['radiator']['rhowater']
+    Urad = house_param['radiator']['Urad']
+    Arad = house_param['radiator']['Arad']
+    volumeRadiator = house_param['radiator']['volume_rad']
+    UAradiator = Urad * Arad
+    Crad =  cpwater*volumeRadiator*rhowater
+    
+    #Waterflow through the radiator (SHOULD BE REMOVED IN FUTURE, STATIC VALUE FOR NOW)
+    mdot = house_param['radiator']['mdot']
+    
+    #Heat capacity of the buffervessel
+    volumeBuffervessel = house_param['radiator']['volume_buffervessel']
+    Cbuffervessel = cpwater*volumeBuffervessel*rhowater
+    
 
     df_nen = nen5060_to_dataframe()
     df_irr = run_qsun(df_nen)
@@ -71,7 +89,7 @@ def main():
     SP_sim = SP[0:days_sim * 24]
     # solve ODE
     data = house_buffervessel(T_outdoor_sim, Qinternal_sim, Qsolar_sim, SP_sim, time_sim,
-                 CF, Rair_outdoor, Rair_wall, Cair, Cwall)
+                 CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot, UAradiator, Crad, Cbuffervessel, cpwater)
 
     # plot the results
     plt.figure(figsize=(15, 5))         # key-value pair: no spaces
