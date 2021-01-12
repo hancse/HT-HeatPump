@@ -2,7 +2,7 @@
 house model base on 2R2C model with a buffervessel and a radiator
 """
 
-from scipy.integrate import odeint       # ODE solver
+from scipy.integrate import solve_ivp       # ODE solver
 import numpy as np                       # linear algebra
 
 def controllerTemperatureandBuffervessel(setpointTemperature, setpointBuffervessel, Tair, Tbuffervessel):
@@ -17,7 +17,7 @@ def controllerTemperatureandBuffervessel(setpointTemperature, setpointBuffervess
     
     
 
-def model_buffervessel(x, t, T_outdoor, Q_internal, Q_solar, SP_T, CF, Rair_outdoor, Rair_wall, Cair, Cwall, UAradiator, Crad, Cbuffervessel, cpwater):
+def model_buffervessel(t, x, T_outdoor, Q_internal, Q_solar, SP_T, CF, Rair_outdoor, Rair_wall, Cair, Cwall, UAradiator, Crad, Cbuffervessel, cpwater):
     """model function for scipy.integrate.odeint.
 
     :param x:            (array):   variable array dependent on time with the vairable Air temperature, Wall temperature Return water temperature and buffervessel temperature
@@ -110,13 +110,12 @@ def house_buffervessel(T_outdoor, Q_internal, Q_solar, SP_T, time_sim, CF,
 
     inputs = (T_outdoor, Q_internal, Q_solar, SP_T, CF,
                   Rair_outdoor, Rair_wall, Cair, Cwall, UAradiator, Crad, Cbuffervessel, cpwater)
-    y = odeint(model_buffervessel, y0, t, args=inputs)
+    y = solve_ivp(model_buffervessel, [0, t[-1]], y0, args=inputs)
     
-    Tair = y[:,0]
-    Twall = y[:,1]
-    Treturn = y[:,2]
-    Tbuffervessel = y[:,3]
-    energy = y[:,4]
-    
-    return Tair, Twall, Treturn, Tbuffervessel
+    Tair = y.y[0,:]
+    Twall = y.y[1,:]
+    Treturn = y.y[2,:]
+    Tbuffervessel = y.y[3,:]
+    print(y.y[4,-1]/3600000)    
+    return Tair, Twall, Treturn, Tbuffervessel, y.t
 

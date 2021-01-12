@@ -90,12 +90,12 @@ def main():
 
     # plot the results
     plt.figure(figsize=(15, 5))         # key-value pair: no spaces
-    plt.plot(data[0], label='Tair')
-    plt.plot(data[1], label='Twall')
-    plt.plot(data[2], label='Treturn')
-    plt.plot(data[3], label='Tbuffervessel')
-    plt.plot(SP_sim, label='SP_Temperature')
-    plt.plot(T_outdoor_sim,label='Toutdoor')
+    plt.plot(data [4],data[0], label='Tair')
+    plt.plot(data [4],data[1], label='Twall')
+    plt.plot(data [4],data[2], label='Treturn')
+    plt.plot(data [4],data[3], label='Tbuffervessel')
+    plt.plot(time_sim, SP_sim, label='SP_Temperature')
+    plt.plot(time_sim,T_outdoor_sim,label='Toutdoor')
     plt.legend(loc='best')
     plt.show()
 
