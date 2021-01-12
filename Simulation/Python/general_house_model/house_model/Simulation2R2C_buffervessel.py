@@ -32,9 +32,6 @@ def main():
     UAradiator = Urad * Arad
     Crad =  cpwater*volumeRadiator*rhowater
     
-    #Waterflow through the radiator (SHOULD BE REMOVED IN FUTURE, STATIC VALUE FOR NOW)
-    mdot = house_param['radiator']['mdot']
-    
     #Heat capacity of the buffervessel
     volumeBuffervessel = house_param['radiator']['volume_buffervessel']
     Cbuffervessel = cpwater*volumeBuffervessel*rhowater
@@ -89,13 +86,13 @@ def main():
     SP_sim = SP[0:days_sim * 24]
     # solve ODE
     data = house_buffervessel(T_outdoor_sim, Qinternal_sim, Qsolar_sim, SP_sim, time_sim,
-                 CF, Rair_outdoor, Rair_wall, Cair, Cwall, mdot, UAradiator, Crad, Cbuffervessel, cpwater)
+                 CF, Rair_outdoor, Rair_wall, Cair, Cwall, UAradiator, Crad, Cbuffervessel, cpwater)
 
     # plot the results
     plt.figure(figsize=(15, 5))         # key-value pair: no spaces
     plt.plot(data[0], label='Tair')
-    #plt.plot(data[1], label='Twall')
-    #plt.plot(data[2], label='Treturn')
+    plt.plot(data[1], label='Twall')
+    plt.plot(data[2], label='Treturn')
     plt.plot(data[3], label='Tbuffervessel')
     plt.plot(SP_sim, label='SP_Temperature')
     plt.plot(T_outdoor_sim,label='Toutdoor')
