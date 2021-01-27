@@ -46,8 +46,8 @@ the parameters c_internal_mass, th_internal_mass and rho_internal_mass
 
 # It is assumed that furniture and the surface part of the walls have the same temperature
 # as the air and the wall mass is divided between the air and wall mass.
-# Thus, the capacity of the air node consists of the air capacity,
-# furniture capacity and capacity of a part of the walls.
+# Thus, the Heat capacity of the air node consists of the air heat capacity,
+# furniture Heat capacity and Heat capacity of a part of the walls.
 # Appendix I presents the coefficients in the dwelling model.
 # In the resistance Rair_outdoor the influence of heat transmission through the outdoor walls
 # and natural ventilation is considered.
@@ -68,9 +68,10 @@ def calculateRC(hp: dict):
     # assignment to local variables from hp: dict 
 	
     # Dwelling temperatures calculation
+	# file://../house.py 	
 	
 	#_______________________Dwelling temperatures calculation________________________
-	# file://../house.py 	
+
 	#   Tairdt = ((T_outdoor - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall 
 	#             + Qdotinst + Qdot_internal + CF * Qdot_solar) / Cair
 
@@ -91,7 +92,7 @@ def calculateRC(hp: dict):
 	#       Ventilation, volume air flow:   qV = (n * V_dwelling) / 3600
     
 	# Initial parameters file for House model
-    ##Predefined variables
+    # Predefined variables
    
    
 	#CF(solar radiation):  the convection factor is the part 
@@ -147,17 +148,17 @@ def calculateRC(hp: dict):
 	# Resistance indoor air-outdoor air
 	Rair_outdoor = 1.0 / (A_facade * U + A_glass * Uglass + qm * c_air)  
 
-	#Calculation of the capacities.
+	#Calculation of the thermal capacitances (heat capacities).
 
-	#Capacity indoor air + walls:	Cair = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0 + rho_air * c_air * V_dwelling    
+	#Heat capacity indoor air + walls:	Cair = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0 + rho_air * c_air * V_dwelling    
 
-	#Capacity walls(opt1): 			Cwall = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0 
-	#Capacity walls(opt2):   		Cwall = rho_facade * c_facade * V_facade / 2.0
+	#Heat capacity walls(opt1): 			Cwall = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0 
+	#Heat capacity walls(opt2):   		Cwall = rho_facade * c_facade * V_facade / 2.0
 	#	
 	#		Volume facade walls construction [m3]:  V_facade = A_facade*th_facade  
 	#												th_facade: Construction thickness [m]
 	
-	#__________Capacity indoor air + walls____________
+	#__________Heat capacity indoor air + walls____________
 	
     #Floor and internal walls construction
 	#Light_weight = 0 / Middle_weight = 1  / Heavy_weight = 2
@@ -171,10 +172,10 @@ def calculateRC(hp: dict):
 	#Volume floor and internal walls construction [m3]
     V_internal_mass = A_internal_mass * th_internal_mass
 
-	#Capacity walls (Envelop model has both walls where both surfaces are used for energy storage -> the construction thickness/2)
+	#Heat capacity walls (Envelop model has both walls where both surfaces are used for energy storage -> the construction thickness/2)
     Cair = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0 + rho_air * c_air * V_dwelling
 
-	#___________Capacity walls____________________
+	#___________Heat capacity walls____________________
 	
 	#Facade construction
     #Light_weight = 0 / Middle_weight = 1  / Heavy_weight = 2
@@ -187,7 +188,7 @@ def calculateRC(hp: dict):
     rho_facade = hp['construction']['rho_facade'][N_facade]
 	#Volume facade walls construction [m3]:
 	V_facade = A_facade*th_facade	
-	#Capacity walls (Envelop model has both walls where both surfaces are used for energy storage -> the construction thickness/2)
+	#Heat capacity walls (Envelop model has both walls where both surfaces are used for energy storage -> the construction thickness/2)
     Cwall = rho_internal_mass * c_internal_mass * V_internal_mass / 2.0  
 	#Cwall = rho_facade * c_facade * V_facade / 2.0  # Capacity walls
 
