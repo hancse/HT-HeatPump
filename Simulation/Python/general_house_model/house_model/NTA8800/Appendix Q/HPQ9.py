@@ -92,6 +92,7 @@ def get_fix_mins_maxs(mins, maxs):
 
 
 if __name__ == "__main__":
+    print("Heat Pump Model (L/W) according to NTA8800:2020, Appendix Q9")
     Tin = np.array([7, 7, -7])
     Tout = np.array([35, 55, 35])
     COP = np.array([4.0, 3.0, 2.5])
