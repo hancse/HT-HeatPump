@@ -4,7 +4,7 @@ Created on Tue Nov 10 12:05:19 2020
 
 @author: TrungNguyen, PvK, MvdB
 """
-from house_buffervessel import house_buffervessel  # exposed function "house" in house module
+from house_buffervessel_LMTD import house_buffervessel  # exposed function "house" in house module
 # function "model" in module house is private
 
 from configurator import load_config, calculateRC

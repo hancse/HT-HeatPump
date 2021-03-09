@@ -12,8 +12,16 @@ def controllerTemperatureandBuffervessel(setpointTemperature, setpointBuffervess
     Qinst = errorbuffervessel * 300
     Qinst = np.clip(Qinst, 0, 12000)
         
-    mdot = np.clip(errorroomtemperature*0.05, 0, 0.15)
+    mdot = np.clip(errorroomtemperature*0.1, 0, 0.3)
     return Qinst, mdot
+
+def LMTD(Tbuffervessel, Treturn, Tair):
+    if(Treturn<Tair):
+        LMTD = 0
+    else:
+        value = (Tbuffervessel-Tair)-(Tair/Treturn)-Tair
+        LMTD = (Tbuffervessel-Treturn)/np.log(value)
+    return LMTD
     
     
 
@@ -54,14 +62,21 @@ def model_buffervessel(t, x, T_outdoor, Q_internal, Q_solar, SP_T, CF, Rair_outd
     setpointBuffervessel = 80
     
     # Control :
-        
+   
     Qinst, mdot = controllerTemperatureandBuffervessel(setpointRoomTemperature, setpointBuffervessel, Tair, Tbuffervessel)
+    
+    # LMTD of the radiator
+    
+    if(mdot>0):
+        LMTDradiator = LMTD(Tbuffervessel, Treturn, Tair)
+    else:
+        LMTDradiator = Treturn - Tair
  
     # Equations :
         
-    Tairdt = ((T_outdoor[int(t/3600)] - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + UAradiator*(Treturn-Tair) + Q_internal[int(t/3600)] + CF * Q_solar[int(t/3600)]) / Cair
+    Tairdt = ((T_outdoor[int(t/3600)] - Tair) / Rair_outdoor + (Twall - Tair) / Rair_wall + UAradiator*LMTDradiator + Q_internal[int(t/3600)] + CF * Q_solar[int(t/3600)]) / Cair
     Twalldt = ((Tair - Twall) / Rair_wall + (1 - CF) * Q_solar[int(t/3600)]) / Cwall
-    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) + UAradiator*(Tair-Treturn)) / Crad
+    Treturndt = ((mdot*cpwater*(Tbuffervessel-Treturn)) - UAradiator*LMTDradiator) / Crad
     Tbuffervesseldt = (Qinst + (cpwater*mdot*(Treturn-Tbuffervessel)))/Cbuffervessel
     energydt = Qinst
     

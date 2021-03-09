@@ -84,6 +84,9 @@ def main():
     
     
     SP_sim = SP[0:days_sim * 24]
+
+
+    # addition NTA8800 house model
     
     # Controller value
     
