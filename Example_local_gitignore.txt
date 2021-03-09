@@ -1,0 +1,15 @@
+.gitignore
+.ipynb_checkpoints
+.idea
+__pycache__
+output
+input_data
+*.aux
+*.log
+*.out
+*.gz
+*.toc
+*.bbl
+*.bcf
+*.blg
+*.run.xml

@@ -1,0 +1,4 @@
+WP5 from commit 0f81df2 replaced by WP5new, with structure, using BibLaTeX\biber
+House models references from commit 0f81df2 replaced by House models references new, using BibLateX\biber
+Using natbib /bibtex with MvdS_nuber_url.bst is still possible
+
