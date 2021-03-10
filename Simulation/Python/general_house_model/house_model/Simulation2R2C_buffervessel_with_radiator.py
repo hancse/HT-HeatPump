@@ -12,7 +12,8 @@ from configurator import load_config, calculateRC
 from NEN5060 import nen5060_to_dataframe, run_qsun
 
 from internal_heat_gain import internal_heat_gain
-from Temperature_SP import temp_sp
+# from Temperature_SP import temp_sp
+from Temperature_SP     import thermostat_sp, SP_profile
 
 import matplotlib.pyplot as plt
 
@@ -50,7 +51,7 @@ def main():
     Toutdoor = df_nen.loc[:, 'temperatuur'].values / 10.0  # temperature
     T_outdoor_sim = Toutdoor[0:days_sim*24]
 
-    SP = temp_sp(house_param['setpoint']['t1'],
+    SP = thermostat_sp(house_param['setpoint']['t1'],
                  house_param['setpoint']['t2'],
                  house_param['setpoint']['Night_T_SP'],
                  house_param['setpoint']['Day_T_SP'],
