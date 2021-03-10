@@ -1,0 +1,6 @@
+on 10-03-2021, the repo https://github.com/hancse/twozone_housemodel
+was synchronized with 
+commit 566ff06 of https://github.com/hancse/HT-HeatPump
+by Paul van Kan
+where possible, files in the twozone-housemodel repository
+were merged with the ones in HT-HeatPump 
